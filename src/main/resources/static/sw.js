@@ -1,19 +1,20 @@
-// ClearPath PWA Service Worker
-const CACHE_NAME = 'clearpath-v1';
+// ClearPath PWA Service Worker v2 (Dark Tactical Command Center)
+const CACHE_NAME = 'clearpath-v2';
 const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
-  '/css/clearpath.css',
-  '/js/clearpath-app.js',
-  '/js/audio-siren.js',
+  '/index.html?v=2',
+  '/css/clearpath.css?v=2',
+  '/js/clearpath-app.js?v=2',
+  '/js/audio-siren.js?v=2',
   '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -27,15 +28,21 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-first strategy for live updates
 self.addEventListener('fetch', (event) => {
-  // Pass through API and WebSocket requests
   if (event.request.url.includes('/api/') || event.request.url.includes('/ws')) {
     return;
   }
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 

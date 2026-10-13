@@ -15,8 +15,24 @@
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
-  <!-- ClearPath Dark Command Stylesheet -->
-  <link rel="stylesheet" href="/css/clearpath.css">
+  <!-- ClearPath Dark Command Stylesheet with Cache Busting -->
+  <link rel="stylesheet" href="/css/clearpath.css?v=20261013">
+
+  <script>
+    // Automatic cleanup of legacy PWA caches
+    if ('caches' in window) {
+      caches.keys().then(keys => {
+        keys.forEach(k => {
+          if (k !== 'clearpath-v2') caches.delete(k);
+        });
+      });
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let r of regs) r.update();
+      });
+    }
+  </script>
 </head>
 <body>
 
@@ -327,7 +343,7 @@
   <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
   <!-- ClearPath Application Logic -->
-  <script src="/js/audio-siren.js"></script>
-  <script src="/js/clearpath-app.js"></script>
+  <script src="/js/audio-siren.js?v=20261013"></script>
+  <script src="/js/clearpath-app.js?v=20261013"></script>
 </body>
 </html>
