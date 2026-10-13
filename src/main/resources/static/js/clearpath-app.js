@@ -273,13 +273,14 @@ function initMap() {
 
   L.control.zoom({ position: 'bottomright' }).addTo(AppState.map);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    subdomains: 'abcd'
   }).addTo(AppState.map);
 
   const officerIcon = L.divIcon({
     className: 'officer-map-pin',
-    html: `<div style="background:#0B3D91; border:3px solid #FFF; width:22px; height:22px; border-radius:50%; box-shadow:0 0 10px rgba(11,61,145,0.6);"></div>`,
+    html: `<div style="background:#38BDF8; border:3px solid #FFF; width:22px; height:22px; border-radius:50%; box-shadow:0 0 16px rgba(56,189,248,0.85);"></div>`,
     iconSize: [22, 22],
     iconAnchor: [11, 11]
   });
@@ -457,7 +458,7 @@ async function handleTriggerAlert() {
       if (AppState.ambulanceMarker) AppState.map.removeLayer(AppState.ambulanceMarker);
       const ambIcon = L.divIcon({
         className: 'amb-map-pin',
-        html: `<div style="background:#D32F2F; border:3px solid #FFF; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; box-shadow:0 0 16px #D32F2F;">&#10010;</div>`,
+        html: `<div style="background:#EF4444; border:3px solid #FFF; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; box-shadow:0 0 24px rgba(239,68,68,0.9);">&#10010;</div>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14]
       });
