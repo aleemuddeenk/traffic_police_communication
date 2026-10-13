@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgis:
+    image: postgis/postgis:15-3.3
+    container_name: clearpath-postgis
+    environment:
+      POSTGRES_DB: clearpath
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d clearpath"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  clearpath-app:
+    build: .
+    container_name: clearpath-app
+    depends_on:
+      postgis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: postgis
+      DB_PORT: 5432
+      DB_NAME: clearpath
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+      JWT_SECRET: ClearPathPoliceSecretKeySuperSecureAndLongEnoughForHmacSha256_2026!
+
+volumes:
+  postgis_data:
