@@ -38,7 +38,7 @@ public class MockPoliceVerificationServiceImpl implements PoliceVerificationServ
                 "Central Traffic Division",
                 "Metro North",
                 "+91-9876543210",
-                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces",
+                "/images/badge-avatar.svg",
                 defaultHashedPassword
         ));
 
@@ -50,7 +50,7 @@ public class MockPoliceVerificationServiceImpl implements PoliceVerificationServ
                 "MG Road Junction Sector",
                 "Metro Central",
                 "+91-9876543211",
-                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces",
+                "/images/badge-avatar.svg",
                 defaultHashedPassword
         ));
 
@@ -62,7 +62,7 @@ public class MockPoliceVerificationServiceImpl implements PoliceVerificationServ
                 "Outer Ring Road Outpost",
                 "Metro South",
                 "+91-9876543212",
-                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=faces",
+                "/images/badge-avatar.svg",
                 defaultHashedPassword
         ));
 
@@ -74,7 +74,7 @@ public class MockPoliceVerificationServiceImpl implements PoliceVerificationServ
                 "Highway Corridor Unit 4",
                 "Metro West",
                 "+91-9876543213",
-                "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=faces",
+                "/images/badge-avatar.svg",
                 defaultHashedPassword
         ));
 

@@ -3,23 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ClearPath - Emergency Traffic Clearance Network</title>
-  <meta name="theme-color" content="#06090F">
+  <title>ClearPath - Traffic Police Dispatch Terminal</title>
+  <meta name="theme-color" content="#0B3D91">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="manifest" href="/manifest.json">
-
-  <!-- Google Font: Plus Jakarta Sans & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
-  <!-- ClearPath Dark Command Stylesheet with Cache Busting -->
-  <link rel="stylesheet" href="/css/clearpath.css?v=20261013">
+  <!-- Official Police Stylesheet with Cache Busting -->
+  <link rel="stylesheet" href="/css/clearpath.css?v=20261017">
 
   <script>
-    // Automatic cleanup of legacy PWA caches
     if ('caches' in window) {
       caches.keys().then(keys => {
         keys.forEach(k => {
@@ -36,18 +31,18 @@
 </head>
 <body>
 
-  <!-- Sleek Dark Tactical Top Bar -->
+  <!-- Official Police Department Header -->
   <header class="gov-header">
     <div class="brand-wrapper">
       <div class="gov-emblem">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <polyline points="9 12 11 14 15 10"/>
+          <path d="m9 12 2 2 4-4"/>
         </svg>
       </div>
       <div>
         <div class="brand-title">ClearPath</div>
-        <div class="brand-subtitle">Tactical Traffic Dispatch</div>
+        <div class="brand-subtitle">Traffic Police Dispatch Console</div>
       </div>
     </div>
     <div id="headerStatusBadge" class="header-status-badge">
@@ -58,122 +53,104 @@
 
   <div class="app-container">
 
-    <!-- SCREEN 1: LOGIN (HERO SAAS / DARK COMMAND STYLE) -->
-    <div id="loginScreen" style="padding: 24px 20px;">
-      <div style="text-align: center; margin-top: 8px;">
-        <div class="hero-category-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Emergency Police Network
+    <!-- SCREEN 1: OFFICER LOGIN -->
+    <div id="loginScreen" style="padding: 16px;">
+      <div class="gov-card">
+        <div class="panel-header-title">Officer Authentication</div>
+        <div class="panel-header-desc">
+          Official Police Dispatch Terminal. Enter authorized credentials to begin active duty.
         </div>
-        <h1 class="hero-heading">
-          Clear the path before <br><span class="gradient-text">it arrives.</span>
-        </h1>
-        <p class="hero-subtext">
-          Instant forward-corridor telemetry for traffic officers. When an ambulance approaches, alert on-duty officers within 3 km in 0.2s.
-        </p>
-      </div>
 
-      <div id="loginErrorMsg" style="display:none; padding:12px 16px; margin-bottom:16px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; border-radius:var(--radius-md); font-size:0.85rem;"></div>
+        <div id="loginErrorMsg" style="display:none; padding:10px 14px; margin-bottom:14px; background:#FEE2E2; border:1px solid #F87171; color:#991B1B; border-radius:4px; font-size:0.85rem;"></div>
 
-      <!-- Sleek Glass Form Card -->
-      <div class="gov-card" style="margin: 0 0 16px 0;">
         <form id="loginForm" onsubmit="return false;">
-          <div style="margin-bottom: 14px;">
-            <label class="input-label" for="officerIdInput">Official Officer ID</label>
+          <div style="margin-bottom: 12px;">
+            <label class="input-label" for="officerIdInput">Officer Identification Number</label>
             <input type="text" id="officerIdInput" class="gov-input" placeholder="e.g. POLICE-101" required autocomplete="username">
           </div>
 
-          <div style="margin-bottom: 18px;">
-            <label class="input-label" for="passwordInput">Security Key / Password</label>
+          <div style="margin-bottom: 16px;">
+            <label class="input-label" for="passwordInput">Security Access Key</label>
             <input type="password" id="passwordInput" class="gov-input" placeholder="Enter password" value="password123" required autocomplete="current-password">
           </div>
 
           <button type="button" id="loginBtn" class="btn btn-primary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Authenticate &amp; Enter
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            VERIFY CREDENTIALS &amp; LOGIN
           </button>
         </form>
 
-        <!-- Fast Tap Demo Officer Selector (Matching reference image pill buttons) -->
+        <!-- Official Seeded Officer Selector for Field Verification -->
         <div class="demo-selector-section">
-          <div class="demo-title">Tap to Test Verified Officer Profile</div>
+          <div class="demo-title">Select Officer Profile (Testing Utility)</div>
           <div class="demo-pills">
             <button type="button" class="demo-pill" onclick="fillCredentials('POLICE-101', 'Inspector Rajesh Kumar (Central)')">
               <span><strong>POLICE-101</strong>: Insp. Rajesh Kumar</span>
-              <span style="font-size:0.75rem; color:var(--text-muted);">Central Sector</span>
+              <span style="font-size:0.75rem; color:#5A6A80;">Central Traffic Division</span>
             </button>
             <button type="button" class="demo-pill" onclick="fillCredentials('POLICE-102', 'SI Vikram Singh (MG Road Sector)')">
               <span><strong>POLICE-102</strong>: SI Vikram Singh</span>
-              <span style="font-size:0.75rem; color:var(--text-muted);">MG Road Ahead</span>
+              <span style="font-size:0.75rem; color:#5A6A80;">MG Road Sector</span>
             </button>
             <button type="button" class="demo-pill" onclick="fillCredentials('POLICE-103', 'HC Anita Sharma (Ring Road Outpost)')">
               <span><strong>POLICE-103</strong>: HC Anita Sharma</span>
-              <span style="font-size:0.75rem; color:var(--text-muted);">Outer Ring Road</span>
+              <span style="font-size:0.75rem; color:#5A6A80;">Outer Ring Road</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Sleek Metric Card (Directly inspired by the 8.7 Score Card in the screenshot) -->
-      <div class="score-metric-card">
-        <div class="score-metric-header">
-          <div>
-            <div class="score-badge-number">99.8%</div>
-            <div class="score-badge-label">Active Corridor Clearance</div>
-          </div>
-          <div style="text-align: right; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
-            CLEARPATH v1.0<br>MIL-SPEC GEO
-          </div>
+      <!-- Operational Specifications (Authentic system parameters) -->
+      <div class="operational-spec-card">
+        <div style="font-size:0.85rem; font-weight:700; color:#0B3D91; text-transform:uppercase; letter-spacing:0.5px;">
+          System Parameters &amp; Dispatch Rules
         </div>
-        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
-          Real-time forward geocoding filters out all traffic behind the vehicle, notifying only intercepting checkpoints ahead.
-        </p>
-
-        <div class="score-progress-row">
-          <div class="score-mini-stat">
-            <div class="score-mini-label">Target Range</div>
-            <div class="score-mini-val">3.0 km</div>
-            <div class="score-bar-track">
-              <div class="score-bar-fill" style="width: 100%;"></div>
-            </div>
+        <div class="spec-grid">
+          <div class="spec-item">
+            <div class="spec-label">Target Range</div>
+            <div class="spec-value">3.0 km</div>
           </div>
-          <div class="score-mini-stat">
-            <div class="score-mini-label">Forward Cone</div>
-            <div class="score-mini-val">&plusmn; 60&deg;</div>
-            <div class="score-bar-track">
-              <div class="score-bar-fill" style="width: 85%;"></div>
-            </div>
+          <div class="spec-item">
+            <div class="spec-label">Forward Vector Cone</div>
+            <div class="spec-value">&plusmn; 60 Degrees</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Safety Override</div>
+            <div class="spec-value">&le; 200 Meters</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Backward Filtering</div>
+            <div class="spec-value">Strictly Excluded</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- SCREEN 2: HOME / OFFICER PROFILE SCREEN -->
-    <div id="homeScreen" style="display:none; padding:20px;">
-      <!-- Officer Profile Card -->
+    <div id="homeScreen" style="display:none; padding:16px;">
       <div class="officer-badge-card">
-        <img id="profilePhoto" class="officer-avatar" src="" alt="Officer Photo">
+        <img id="profilePhoto" class="officer-avatar" src="/images/badge-avatar.svg" alt="Officer Badge">
         <div class="officer-details">
           <span id="profileRank" class="officer-rank-pill">INSPECTOR</span>
           <h3 id="profileName">Officer Name</h3>
           <div class="officer-meta">
-            Badge: <strong id="profileBadge" style="color:#FFF;">TR-901</strong> | ID: <strong id="profileOfficerId" style="color:#60A5FA;">POLICE-101</strong>
+            Badge: <strong id="profileBadge">TR-901</strong> | ID: <strong id="profileOfficerId">POLICE-101</strong>
           </div>
           <div class="officer-meta" id="profileStation">Central Traffic Division</div>
         </div>
       </div>
 
       <div class="gov-card" style="margin: 16px 0;">
-        <h3 style="margin-bottom: 6px; font-size:1.15rem; color:#FFFFFF;">Shift Deployment</h3>
-        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px; line-height:1.5;">
-          Starting duty initiates high-frequency GPS telemetry and arms the siren receiver. When an ambulance approaches your corridor, you will receive an instant audio-visual alert.
+        <div class="panel-header-title">Active Duty Shift Control</div>
+        <p style="font-size: 0.88rem; color: #475569; margin-bottom: 14px; line-height:1.5;">
+          Starting duty activates high-accuracy location tracking and arms the siren receiver. When an emergency ambulance approaches your assigned corridor, you will receive an audible alarm with intersecting route details.
         </p>
 
-        <!-- Position Simulation Mode selector for indoor / multi-tab desktop testing -->
+        <!-- Position Simulation Mode selector for indoor / multi-device field testing -->
         <div class="sim-controls-panel">
-          <strong style="color:#F59E0B;">Testing Coordinates Preset:</strong>
-          <div style="font-size: 0.72rem; color: #D97706; margin-top:2px;">
-            Select a simulated post or use device GPS:
+          <strong style="color:#B45309;">Simulated Deployment Coordinates:</strong>
+          <div style="font-size: 0.72rem; color: #92400E; margin-top:2px;">
+            Select a deployment post or use device GPS:
           </div>
           <div class="sim-btn-row">
             <button type="button" class="sim-btn" onclick="setPresetPosition('origin')">Ambulance Origin (MG Rd)</button>
@@ -182,9 +159,9 @@
           </div>
         </div>
 
-        <button type="button" id="startDutyBtn" class="btn btn-primary" style="margin-top: 16px; font-size: 1.05rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          START DUTY SHIFT
+        <button type="button" id="startDutyBtn" class="btn btn-primary" style="margin-top: 14px; font-size: 1.05rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          START ACTIVE DUTY SHIFT
         </button>
 
         <button type="button" id="logoutBtn" class="btn btn-secondary" style="margin-top: 10px;">
@@ -192,12 +169,12 @@
         </button>
       </div>
 
-      <div id="permissionDeniedNotice" style="display:none; padding:14px; background:rgba(245,158,11,0.12); color:#FCD34D; border:1px solid rgba(245,158,11,0.3); border-radius:var(--radius-md); font-size:0.85rem; margin-top:10px;">
-        <strong>GPS Permission Required:</strong> ClearPath needs your location to detect approaching ambulances within 3 km of your post. Please enable location services and click "START DUTY" again.
+      <div id="permissionDeniedNotice" style="display:none; padding:12px; background:#FEF3C7; color:#92400E; border:1px solid #FCD34D; border-radius:4px; font-size:0.85rem; margin-top:10px;">
+        <strong>GPS Permission Required:</strong> Location access is required to compute distance to approaching emergency vehicles. Enable location services and click "START ACTIVE DUTY SHIFT" again.
       </div>
     </div>
 
-    <!-- SCREEN 3: DUTY SCREEN (LIVE TACTICAL MAP & TRIGGER) -->
+    <!-- SCREEN 3: DUTY SCREEN (LIVE MAP & TRIGGER) -->
     <div id="dutyScreen" style="display:none; flex-direction:column; flex:1;">
       <div class="duty-map-wrapper">
         <div id="leafletMap"></div>
@@ -205,8 +182,8 @@
         <!-- Floating map header bar -->
         <div class="map-floating-bar">
           <div class="location-readout">
-            <span id="currentRoadName" class="road-name-tag">Locating corridor...</span>
-            <span id="currentCoords" class="gps-coords-tag">Lat: -- Lon: --</span>
+            <span id="currentRoadName" class="road-name-tag">Corridor Monitoring Active</span>
+            <span id="currentCoords" class="gps-coords-tag">Lat: 0.0000 | Lon: 0.0000</span>
           </div>
           <button type="button" id="endDutyBtn" class="btn btn-secondary btn-sm" style="width: auto;">
             End Duty
@@ -219,21 +196,21 @@
         <!-- Live Sender Status Widget (Visible when current officer triggered an ambulance) -->
         <div id="senderActiveStatus" class="sender-status-widget" style="display:none;">
           <div class="live-ack-counter">
-            <span style="color:#FFF;">Active: <strong id="senderRoadLabel" style="color:#60A5FA;">MG Road</strong></span>
+            <span>Ambulance Active: <strong id="senderRoadLabel">MG Road</strong></span>
             <span id="senderAckCounter" class="counter-tag">0 / 0 Acknowledged</span>
           </div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">
-            Intersecting roads notified: <span id="senderConnectingRoads" style="color:#93C5FD;">Scanning...</span>
+          <div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">
+            Connecting roads alerted: <span id="senderConnectingRoads" style="color:#0B3D91; font-weight:600;">Scanning...</span>
           </div>
-          <button type="button" id="ambulancePassedBtn" class="btn btn-secondary btn-sm" style="margin-top: 10px; width:100%; border-color:#38BDF8; color:#38BDF8;">
-            Ambulance Passed (Corridor Clear)
+          <button type="button" id="ambulancePassedBtn" class="btn btn-secondary btn-sm" style="margin-top: 8px; width:100%; border-color:#0B3D91; color:#0B3D91;">
+            Ambulance Passed (Clear Corridor)
           </button>
         </div>
 
         <!-- Main Emergency Button -->
         <button type="button" id="openTriggerModalBtn" class="btn btn-emergency">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          AMBULANCE SPOTTED
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          AMBULANCE SPOTTED (EMERGENCY DISPATCH)
         </button>
       </div>
     </div>
@@ -244,58 +221,56 @@
   <div id="triggerModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header emergency">
-        <h3>Ambulance Spotted</h3>
-        <button type="button" onclick="closeTriggerModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer; line-height:1;">&times;</button>
+        <h3>Ambulance Spotted (Emergency Dispatch)</h3>
+        <button type="button" onclick="closeTriggerModal()" style="background:none; border:none; color:#FFFFFF; font-size:1.4rem; cursor:pointer; line-height:1;">&times;</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px; line-height:1.5;">
-          Choose the direction the emergency ambulance is <strong style="color:#FFF;">FACING / HEADING</strong>. All officers ahead within 3 km will be alerted instantly.
+        <p style="font-size: 0.88rem; color: #1A2332; margin-bottom: 12px; line-height:1.5;">
+          Select the direction the ambulance is <strong>FACING OR TRAVELING</strong>. Officers within 3 km ahead will be notified to clear intersecting traffic.
         </p>
 
-        <label class="input-label">Heading Trajectory</label>
+        <label class="input-label">Ambulance Heading Direction</label>
         <div class="compass-dial-grid">
-          <button type="button" class="compass-btn selected" data-dir="N" onclick="selectCompass('N')">N (0°)</button>
-          <button type="button" class="compass-btn" data-dir="NE" onclick="selectCompass('NE')">NE (45°)</button>
-          <button type="button" class="compass-btn" data-dir="E" onclick="selectCompass('E')">E (90°)</button>
-          <button type="button" class="compass-btn" data-dir="SE" onclick="selectCompass('SE')">SE (135°)</button>
-          <button type="button" class="compass-btn" data-dir="S" onclick="selectCompass('S')">S (180°)</button>
-          <button type="button" class="compass-btn" data-dir="SW" onclick="selectCompass('SW')">SW (225°)</button>
-          <button type="button" class="compass-btn" data-dir="W" onclick="selectCompass('W')">W (270°)</button>
-          <button type="button" class="compass-btn" data-dir="NW" onclick="selectCompass('NW')">NW (315°)</button>
+          <button type="button" class="compass-btn selected" data-dir="N" onclick="selectCompass('N')">N (0 deg)</button>
+          <button type="button" class="compass-btn" data-dir="NE" onclick="selectCompass('NE')">NE (45 deg)</button>
+          <button type="button" class="compass-btn" data-dir="E" onclick="selectCompass('E')">E (90 deg)</button>
+          <button type="button" class="compass-btn" data-dir="SE" onclick="selectCompass('SE')">SE (135 deg)</button>
+          <button type="button" class="compass-btn" data-dir="S" onclick="selectCompass('S')">S (180 deg)</button>
+          <button type="button" class="compass-btn" data-dir="SW" onclick="selectCompass('SW')">SW (225 deg)</button>
+          <button type="button" class="compass-btn" data-dir="W" onclick="selectCompass('W')">W (270 deg)</button>
+          <button type="button" class="compass-btn" data-dir="NW" onclick="selectCompass('NW')">NW (315 deg)</button>
         </div>
 
-        <div style="margin-top: 16px;">
-          <label class="input-label" for="ambulanceTypeSelect">Ambulance Category</label>
+        <div style="margin-top: 14px;">
+          <label class="input-label" for="ambulanceTypeSelect">Emergency Vehicle Category</label>
           <select id="ambulanceTypeSelect" class="gov-select">
-            <option value="Advanced Life Support (ALS)">Advanced Life Support (ALS - Critical)</option>
+            <option value="Advanced Life Support (ALS)">Advanced Life Support (ALS)</option>
             <option value="Basic Life Support (BLS)">Basic Life Support (BLS)</option>
-            <option value="Patient Transport">Patient Transport Ambulance</option>
+            <option value="Patient Transport">Patient Transport Unit</option>
             <option value="Emergency Ambulance" selected>General Emergency Ambulance</option>
           </select>
         </div>
 
-        <div style="margin-top: 14px;">
-          <label class="input-label" for="ambulancePlateInput">Unit / Plate Identifier (Optional)</label>
+        <div style="margin-top: 12px;">
+          <label class="input-label" for="ambulancePlateInput">Vehicle Plate or Unit Identifier (Optional)</label>
           <input type="text" id="ambulancePlateInput" class="gov-input" placeholder="e.g. KA-01-EA-108">
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" onclick="closeTriggerModal()" class="btn btn-secondary" style="flex:1;">Cancel</button>
         <button type="button" id="confirmTriggerBtn" class="btn btn-emergency" style="flex:2;">
-          DISPATCH ALERT
+          CONFIRM AND DISPATCH
         </button>
       </div>
     </div>
   </div>
 
-  <!-- FULL-SCREEN SIREN ALERT OVERLAY (RECEIVERS) -->
+  <!-- FULL SCREEN SIREN ALERT OVERLAY (RECEIVERS) -->
   <div id="sirenAlertOverlay" class="siren-alert-container">
-    <div class="siren-pulse-icon">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="siren-header-banner">
+      <div class="siren-title">EMERGENCY: AMBULANCE APPROACHING</div>
+      <div style="font-size: 0.95rem; font-weight:700; color:#FFFFFF;">CLEAR FORWARD CORRIDOR IMMEDIATELY</div>
     </div>
-
-    <div class="siren-title">AMBULANCE APPROACHING</div>
-    <div style="font-size: 0.95rem; color: #FCA5A5; letter-spacing:0.5px;">Clear Forward Traffic Immediately</div>
 
     <div class="siren-info-card">
       <div class="siren-row">
@@ -303,47 +278,59 @@
         <span id="alertSenderName" class="siren-row-val">Inspector Rajesh Kumar</span>
       </div>
       <div class="siren-row">
-        <span class="siren-row-label">Sender Badge</span>
+        <span class="siren-row-label">Badge Number</span>
         <span id="alertSenderBadge" class="siren-row-val">TR-901 (Central)</span>
       </div>
       <div class="siren-row">
-        <span class="siren-row-label">Road</span>
-        <span id="alertRoadName" class="siren-row-val" style="color:#60A5FA;">MG Road Corridor</span>
+        <span class="siren-row-label">Assigned Road</span>
+        <span id="alertRoadName" class="siren-row-val">MG Road Corridor</span>
       </div>
       <div class="siren-row">
-        <span class="siren-row-label">Distance to You</span>
-        <span id="alertDistanceVal" class="siren-row-val" style="font-size:1.2rem; color:#FBBF24;">0.85 km away</span>
+        <span class="siren-row-label">Distance to Post</span>
+        <span id="alertDistanceVal" class="siren-row-val" style="font-size:1.15rem; color:#FEF08A;">0.85 km away</span>
       </div>
       <div class="siren-row">
-        <span class="siren-row-label">Heading Direction</span>
+        <span class="siren-row-label">Travel Direction</span>
         <span id="alertHeadingVal" class="siren-row-val">North (N)</span>
       </div>
-      <div style="margin-top: 14px;">
-        <span class="siren-row-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">Junctions Ahead to Clear:</span>
+      <div style="margin-top: 12px;">
+        <span class="siren-row-label" style="font-size:0.75rem; text-transform:uppercase;">Intersecting Roads to Clear:</span>
         <div id="alertConnectingRoadsList" class="connecting-roads-badge-list">
           <span class="connecting-road-badge">MG Road Flyover</span>
-          <span class="connecting-road-badge">Brigade Rd Junction</span>
+          <span class="connecting-road-badge">Brigade Road Junction</span>
         </div>
       </div>
     </div>
 
     <div class="siren-actions">
       <button type="button" id="ackAlertBtn" class="btn-ack">
-        &check; I'M CLEARING THE ROAD
+        I AM CLEARING THE ROAD
       </button>
-      <button type="button" id="dismissAlertBtn" class="btn btn-secondary" style="background:rgba(255,255,255,0.06); color:white; border-color:rgba(255,255,255,0.15);">
+      <button type="button" id="dismissAlertBtn" class="btn btn-secondary" style="background:#FFFFFF; color:#8B0000; border:none;">
         Dismiss
       </button>
     </div>
   </div>
+
+  <!-- Official Compliance Footer -->
+  <footer class="gov-footer">
+    <div class="footer-links">
+      <a href="/privacy.html" class="footer-link">Privacy Policy</a>
+      <span>|</span>
+      <a href="/terms.html" class="footer-link">Terms and Conditions</a>
+    </div>
+    <div>
+      ClearPath Traffic Police Dispatch Network. Official Government Law Enforcement Property.
+    </div>
+  </footer>
 
   <!-- CDN Dependencies: Leaflet, SockJS, STOMP -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
-  <!-- ClearPath Application Logic -->
-  <script src="/js/audio-siren.js?v=20261013"></script>
-  <script src="/js/clearpath-app.js?v=20261013"></script>
+  <!-- ClearPath Application Logic with Cache Busting -->
+  <script src="/js/audio-siren.js?v=20261017"></script>
+  <script src="/js/clearpath-app.js?v=20261017"></script>
 </body>
 </html>

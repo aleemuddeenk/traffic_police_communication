@@ -38,13 +38,17 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/",
                     "/index.html",
+                    "/privacy.html",
+                    "/terms.html",
                     "/manifest.json",
                     "/sw.js",
                     "/css/**",
                     "/js/**",
                     "/audio/**",
                     "/icons/**",
-                    "/favicon.ico"
+                    "/images/**",
+                    "/favicon.ico",
+                    "/favicon.svg"
                 ).permitAll()
                 // Public auth endpoints
                 .requestMatchers("/api/auth/**").permitAll()

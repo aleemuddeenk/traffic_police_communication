@@ -142,7 +142,7 @@ function setOfficerProfile(profile) {
   if (profile.photoUrl) {
     document.getElementById('profilePhoto').src = profile.photoUrl;
   } else {
-    document.getElementById('profilePhoto').src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces';
+    document.getElementById('profilePhoto').src = '/images/badge-avatar.svg';
   }
 
   updateHeaderStatus();
@@ -273,16 +273,15 @@ function initMap() {
 
   L.control.zoom({ position: 'bottomright' }).addTo(AppState.map);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    subdomains: 'abcd'
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
   }).addTo(AppState.map);
 
   const officerIcon = L.divIcon({
     className: 'officer-map-pin',
-    html: `<div style="background:#38BDF8; border:3px solid #FFF; width:22px; height:22px; border-radius:50%; box-shadow:0 0 16px rgba(56,189,248,0.85);"></div>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11]
+    html: `<div style="background:#0B3D91; border:2.5px solid #FFFFFF; width:20px; height:20px; border-radius:3px; box-shadow:0 1px 4px rgba(11,61,145,0.4);"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
   });
 
   AppState.officerMarker = L.marker([AppState.coords.lat, AppState.coords.lon], { icon: officerIcon })
@@ -458,9 +457,9 @@ async function handleTriggerAlert() {
       if (AppState.ambulanceMarker) AppState.map.removeLayer(AppState.ambulanceMarker);
       const ambIcon = L.divIcon({
         className: 'amb-map-pin',
-        html: `<div style="background:#EF4444; border:3px solid #FFF; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:14px; box-shadow:0 0 24px rgba(239,68,68,0.9);">&#10010;</div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
+        html: `<div style="background:#D32F2F; border:2px solid #FFFFFF; width:26px; height:26px; border-radius:3px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:13px; box-shadow:0 2px 6px rgba(211,47,47,0.5);">A</div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13]
       });
       AppState.ambulanceMarker = L.marker([AppState.coords.lat, AppState.coords.lon], { icon: ambIcon })
         .addTo(AppState.map)
@@ -468,7 +467,7 @@ async function handleTriggerAlert() {
         .openPopup();
     }
 
-    alert(`EMERGENCY ALERT DISPATCHED!\n${data.notifiedCount} officers ahead within 3 km have been alerted.`);
+    alert(`Emergency alert dispatched: ${data.notifiedCount} officers ahead within 3 km have been alerted.`);
   } catch (err) {
     alert('Failed to trigger alert. Check connection.');
   } finally {

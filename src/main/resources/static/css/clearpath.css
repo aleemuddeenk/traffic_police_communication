@@ -1,43 +1,34 @@
-/* ClearPath - Next-Gen Dark Tactical Command UI */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-
+/* ClearPath - Official Police Department Emergency Dispatch Console */
 :root {
-  --bg-pitch: #06090F;
-  --bg-canvas: #090E17;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --bg-card-elevated: #111827;
-  --bg-input: rgba(13, 19, 33, 0.85);
+  --police-blue: #0B3D91;
+  --police-blue-dark: #07265D;
+  --police-blue-hover: #093175;
+  --card-bg: #FFFFFF;
+  --card-light-blue: #E8F0FB;
+  --bg-page: #F4F7FC;
+  --border-color: #CEDCEC;
+  --border-strong: #94A3B8;
+  
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --text-light: #FFFFFF;
+  
+  --emergency-red: #D32F2F;
+  --emergency-red-hover: #B71C1C;
+  --emergency-amber: #D97706;
+  --status-green: #15803D;
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(255, 255, 255, 0.16);
-  --border-glow: rgba(59, 130, 246, 0.4);
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
 
-  --accent-cyan: #06B6D4;
-  --accent-blue: #3B82F6;
-  --accent-indigo: #6366F1;
-  --accent-emerald: #10B981;
-
-  --emergency-red: #EF4444;
-  --emergency-red-glow: rgba(239, 68, 68, 0.45);
-  --emergency-crimson: #991B1B;
-  --emergency-amber: #F59E0B;
-
-  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-full: 9999px;
-
-  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
-  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.25);
-  --shadow-emergency: 0 0 35px rgba(239, 68, 68, 0.45);
+  --shadow-sm: 0 1px 3px rgba(11, 61, 145, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(11, 61, 145, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(11, 61, 145, 0.12);
 }
 
 * {
@@ -48,28 +39,24 @@
 }
 
 body {
-  font-family: var(--font-main);
-  background-color: var(--bg-pitch);
-  background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
-    radial-gradient(circle 400px at 80% 60%, rgba(99, 102, 241, 0.05), transparent);
-  color: var(--text-primary);
+  font-family: var(--font-family);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  line-height: 1.5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  -webkit-font-smoothing: antialiased;
 }
 
-/* Header & Top Bar */
+/* Official Header */
 .gov-header {
-  background: rgba(9, 14, 23, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 14px 20px;
+  background-color: var(--police-blue);
+  color: var(--text-light);
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 3px solid var(--police-blue-dark);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -82,12 +69,11 @@ body {
 }
 
 .gov-emblem {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.1));
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  background: var(--police-blue-dark);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,52 +81,45 @@ body {
 
 .brand-title {
   font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .brand-subtitle {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 1.5px;
-  font-weight: 600;
+  letter-spacing: 1px;
+  opacity: 0.9;
 }
 
 .header-status-badge {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .header-status-badge.on-duty {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #34D399;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+  background: #15803D;
+  border-color: #16A34A;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 8px currentColor;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-xs);
+  background: #FFFFFF;
 }
 
-/* App Outer Shell */
+/* Shell */
 .app-container {
   flex: 1;
   display: flex;
@@ -149,348 +128,256 @@ body {
   max-width: 620px;
   margin: 0 auto;
   width: 100%;
+  background: #FFFFFF;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
-/* Glassmorphic Dark Cards */
+/* Operational Cards */
 .gov-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 24px;
+  background-color: var(--card-light-blue);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
   margin: 16px;
-  box-shadow: var(--shadow-card);
 }
 
-/* Hero Badge Pill */
-.hero-category-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 5px 14px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
+.panel-header-title {
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--police-blue);
+  margin-bottom: 4px;
+}
+
+.panel-header-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
   margin-bottom: 16px;
 }
 
-.hero-heading {
-  font-size: 2.1rem;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.8px;
-  color: var(--text-primary);
-  margin-bottom: 10px;
-}
-
-.hero-heading .gradient-text {
-  background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 50%, #F472B6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-subtext {
-  font-size: 0.92rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-  margin-bottom: 24px;
-}
-
-/* Inputs & Form Fields */
+/* Inputs and Forms */
 .input-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
+  color: var(--police-blue-dark);
+  margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .gov-input, .gov-select {
   width: 100%;
-  padding: 14px 18px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
-  color: var(--text-primary);
-  font-family: var(--font-main);
-  transition: all 0.2s ease;
-  min-height: 50px;
-}
-
-.gov-input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  min-height: 48px;
 }
 
 .gov-input:focus, .gov-select:focus {
   outline: none;
-  border-color: var(--accent-blue);
-  background: rgba(15, 23, 42, 0.95);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 0 20px rgba(59, 130, 246, 0.15);
+  border-color: var(--police-blue);
+  box-shadow: 0 0 0 2px rgba(11, 61, 145, 0.15);
 }
 
-.gov-select option {
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
-}
-
-/* High-Impact Modern Buttons */
+/* Official Action Buttons (Clean 4px-6px borders, strictly no pill shapes) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 14px 24px;
+  gap: 8px;
+  padding: 12px 20px;
   font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: -0.2px;
-  border-radius: var(--radius-md);
+  letter-spacing: 0.3px;
+  border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  min-height: 50px;
+  min-height: 48px;
   text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
-  font-family: var(--font-main);
+  font-family: var(--font-family);
+  transition: background-color 0.15s ease;
 }
 
-/* Sleek Pure-White Button (inspired by screenshot) */
 .btn-primary {
-  background: #FFFFFF;
-  color: #0A0F1D;
-  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.12);
+  background-color: var(--police-blue);
+  color: var(--text-light);
 }
 
 .btn-primary:hover, .btn-primary:active {
-  background: #F1F5F9;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(255, 255, 255, 0.2);
+  background-color: var(--police-blue-dark);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
+  background-color: #FFFFFF;
+  color: var(--police-blue);
+  border: 1.5px solid var(--police-blue);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--border-highlight);
+  background-color: var(--card-light-blue);
 }
 
-/* Glowing Neon Emergency Action Button */
 .btn-emergency {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background-color: var(--emergency-red);
   color: #FFFFFF;
-  box-shadow: var(--shadow-emergency);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  border: 1px solid var(--emergency-red-hover);
 }
 
 .btn-emergency:hover, .btn-emergency:active {
-  background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
-  box-shadow: 0 0 40px rgba(239, 68, 68, 0.65);
-  transform: scale(0.99);
+  background-color: var(--emergency-red-hover);
 }
 
 .btn-sm {
   padding: 8px 14px;
   font-size: 0.82rem;
   min-height: 38px;
-  border-radius: var(--radius-sm);
 }
 
-/* Quick Select Officer Badges (Interactive Pill Buttons) */
+/* Demo Profile Selector (Testing Utility) */
 .demo-selector-section {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-top: 24px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-top: 18px;
 }
 
 .demo-title {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--police-blue-dark);
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
 }
 
 .demo-pills {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .demo-pill {
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--card-light-blue);
+  border: 1px solid var(--border-color);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-main);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease;
-  font-family: var(--font-main);
+  font-family: var(--font-family);
+  text-align: left;
 }
 
 .demo-pill:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.35);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+  background-color: #D7E5F8;
+  border-color: var(--police-blue);
 }
 
 .demo-pill strong {
-  color: #60A5FA;
+  color: var(--police-blue-dark);
 }
 
-/* Sleek Dark Metric Box (inspired by the 8.7 Score Card in screenshot) */
-.score-metric-card {
-  background: rgba(17, 24, 39, 0.9);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  margin: 16px 0;
-  box-shadow: var(--shadow-card);
+/* Operational Specifications Card */
+.operational-spec-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 16px;
 }
 
-.score-metric-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-.score-badge-number {
-  font-size: 2.8rem;
-  font-weight: 800;
-  line-height: 1;
-  color: #FFFFFF;
-  letter-spacing: -1px;
-}
-
-.score-badge-label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #38BDF8;
-  margin-top: 4px;
-}
-
-.score-progress-row {
+.spec-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-subtle);
+  margin-top: 10px;
 }
 
-.score-mini-stat {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: var(--radius-sm);
+.spec-item {
+  background: var(--card-light-blue);
+  border: 1px solid var(--border-color);
   padding: 10px;
+  border-radius: var(--radius-sm);
 }
 
-.score-mini-label {
+.spec-label {
   font-size: 0.72rem;
+  font-weight: 700;
   color: var(--text-muted);
-  font-weight: 600;
   text-transform: uppercase;
 }
 
-.score-mini-val {
-  font-size: 1.15rem;
+.spec-value {
+  font-size: 1rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--police-blue);
   margin-top: 2px;
 }
 
-.score-bar-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
-  margin-top: 6px;
-  overflow: hidden;
-}
-
-.score-bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #3B82F6, #06B6D4);
-}
-
-/* Officer Profile Card */
+/* Verified Officer Card */
 .officer-badge-card {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-card);
+  background: var(--card-light-blue);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 16px;
 }
 
 .officer-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--accent-blue);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--police-blue);
   object-fit: cover;
-  background: var(--bg-canvas);
+  background: #FFFFFF;
 }
 
 .officer-details h3 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 4px;
+  font-size: 1.15rem;
+  color: var(--police-blue-dark);
+  font-weight: 700;
+  margin-bottom: 2px;
 }
 
 .officer-rank-pill {
   display: inline-block;
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  color: #60A5FA;
+  background: var(--police-blue);
+  color: #FFFFFF;
   font-size: 0.7rem;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .officer-meta {
   font-size: 0.82rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
-/* Duty Map Viewport */
+/* Map Viewport */
 .duty-map-wrapper {
   flex: 1;
   position: relative;
-  min-height: 420px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
 }
@@ -499,40 +386,33 @@ body {
   width: 100%;
   height: 100%;
   flex: 1;
-  min-height: 400px;
-  background-color: #06090F;
-}
-
-/* Dark mode filter for base map tiles */
-.leaflet-tile {
-  filter: brightness(0.7) invert(1) contrast(3.5) hue-rotate(200deg) saturate(0.3) brightness(0.85);
+  min-height: 380px;
+  background-color: #E2E8F0;
 }
 
 .map-floating-bar {
   position: absolute;
-  top: 14px;
-  left: 14px;
-  right: 14px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
   z-index: 500;
-  background: rgba(9, 14, 23, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--border-subtle);
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .location-readout {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .road-name-tag {
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--police-blue);
   display: block;
 }
 
@@ -543,55 +423,50 @@ body {
 }
 
 .map-action-drawer {
-  background: var(--bg-canvas);
-  padding: 18px;
-  border-top: 1px solid var(--border-subtle);
+  background: #FFFFFF;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* 8-Point Compass Dial Grid */
+/* 8-Direction Compass Grid */
 .compass-dial-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin: 14px 0;
+  gap: 6px;
+  margin: 12px 0;
 }
 
 .compass-btn {
-  padding: 14px 6px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
+  padding: 12px 4px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--police-blue);
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s ease;
-  font-family: var(--font-main);
+  font-family: var(--font-family);
 }
 
 .compass-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--border-highlight);
+  background-color: var(--card-light-blue);
 }
 
 .compass-btn.selected {
-  background: rgba(59, 130, 246, 0.2);
+  background-color: var(--police-blue);
   color: #FFFFFF;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 18px rgba(59, 130, 246, 0.35);
+  border-color: var(--police-blue-dark);
 }
 
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 12, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(11, 61, 145, 0.75);
   display: none;
   align-items: center;
   justify-content: center;
@@ -604,124 +479,87 @@ body {
 }
 
 .modal-card {
-  background: var(--bg-card-elevated);
-  border: 1px solid var(--border-highlight);
-  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   max-width: 480px;
   width: 100%;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
-  animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 .modal-header {
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 14px 18px;
+  background: var(--police-blue);
+  color: #FFFFFF;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-header.emergency {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(153, 27, 27, 0.05));
-  border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--emergency-red);
 }
 
-.modal-header.emergency h3 {
-  color: #F87171;
-  font-weight: 800;
-  letter-spacing: -0.3px;
+.modal-header h3 {
+  font-size: 1.1rem;
+  color: #FFFFFF;
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 18px;
   max-height: 80vh;
   overflow-y: auto;
 }
 
 .modal-footer {
-  padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.3);
-  border-top: 1px solid var(--border-subtle);
+  padding: 14px 18px;
+  background: var(--bg-page);
+  border-top: 1px solid var(--border-color);
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* Full-Screen Cyber Siren Alert Overlay */
+/* Full Screen Emergency Alert Screen */
 .siren-alert-container {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: rgba(10, 5, 8, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  color: var(--text-primary);
+  background: #8B0000;
+  color: #FFFFFF;
   display: none;
   flex-direction: column;
   padding: 24px;
   text-align: center;
   overflow-y: auto;
+  border: 8px solid #D32F2F;
 }
 
 .siren-alert-container.active {
   display: flex;
 }
 
-.siren-alert-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 100px rgba(239, 68, 68, 0.5);
-  animation: borderFlash 1s infinite alternate;
-}
-
-@keyframes borderFlash {
-  0% { opacity: 0.3; }
-  100% { opacity: 0.9; }
-}
-
-.siren-pulse-icon {
-  width: 96px;
-  height: 96px;
-  margin: 10px auto 20px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 2px solid var(--emergency-red);
-  color: #F87171;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.8rem;
-  box-shadow: 0 0 50px rgba(239, 68, 68, 0.5);
-  animation: pulseBeat 0.8s infinite;
-}
-
-@keyframes pulseBeat {
-  0% { transform: scale(0.95); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(0.95); }
+.siren-header-banner {
+  background: #D32F2F;
+  border: 2px solid #FFFFFF;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 16px;
 }
 
 .siren-title {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: 0.5px;
   color: #FFFFFF;
-  margin-bottom: 6px;
 }
 
 .siren-info-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 16px 0;
   text-align: left;
 }
 
@@ -729,7 +567,7 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 0.92rem;
 }
 
@@ -738,8 +576,8 @@ body {
 }
 
 .siren-row-label {
-  color: var(--text-muted);
-  font-weight: 500;
+  color: #E2E8F0;
+  font-weight: 600;
 }
 
 .siren-row-val {
@@ -750,58 +588,55 @@ body {
 .connecting-roads-badge-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .connecting-road-badge {
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  color: #93C5FD;
+  background: #FFFFFF;
+  color: var(--police-blue-dark);
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
 }
 
 .siren-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 16px;
 }
 
 .btn-ack {
   background: #FFFFFF;
-  color: #0A0F1D;
+  color: #8B0000;
   font-size: 1.15rem;
   font-weight: 800;
-  padding: 18px;
-  border-radius: var(--radius-md);
+  padding: 16px;
+  border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
   text-transform: uppercase;
-  font-family: var(--font-main);
+  font-family: var(--font-family);
 }
 
 .btn-ack:hover, .btn-ack:active {
   background: #F1F5F9;
-  transform: translateY(-1px);
 }
 
 /* Sender Live Status Bar */
 .sender-status-widget {
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 10px;
+  background: var(--card-light-blue);
+  border: 1.5px solid var(--police-blue);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 8px;
 }
 
 .live-ack-counter {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -809,61 +644,83 @@ body {
 }
 
 .counter-tag {
-  background: var(--accent-blue);
+  background: var(--police-blue);
   color: #FFFFFF;
-  padding: 3px 12px;
-  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  border-radius: var(--radius-xs);
   font-size: 0.8rem;
-  font-weight: 800;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+  font-weight: 700;
 }
 
-/* Simulation / Demo Controls */
+/* Simulation Controls */
 .sim-controls-panel {
-  background: rgba(245, 158, 11, 0.06);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  margin-top: 14px;
+  background: #FEF3C7;
+  border: 1px solid #F59E0B;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-top: 12px;
   font-size: 0.82rem;
 }
 
 .sim-btn-row {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .sim-btn {
   flex: 1;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  border-radius: var(--radius-sm);
+  padding: 6px;
+  background: #FFFFFF;
+  border: 1px solid #D97706;
+  border-radius: var(--radius-xs);
   font-size: 0.75rem;
-  font-weight: 600;
-  color: #FBBF24;
+  font-weight: 700;
+  color: #B45309;
   cursor: pointer;
-  font-family: var(--font-main);
-  transition: all 0.2s ease;
+  font-family: var(--font-family);
 }
 
 .sim-btn:hover {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: #F59E0B;
+  background: #FEF9C3;
 }
 
-/* Responsiveness */
+/* Footer Compliance Links */
+.gov-footer {
+  background: var(--police-blue-dark);
+  color: #FFFFFF;
+  padding: 16px 20px;
+  font-size: 0.75rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.footer-link {
+  color: #CBD5E1;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #FFFFFF;
+  text-decoration: underline;
+}
+
+/* Responsive Container */
 @media (min-width: 621px) {
   body {
-    padding: 24px 0;
+    padding: 16px 0;
   }
   .app-container {
-    border-radius: var(--radius-lg);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--border-subtle);
-    min-height: 800px;
-    background: var(--bg-canvas);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    min-height: 750px;
     overflow: hidden;
   }
 }

@@ -31,3 +31,8 @@ target/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Agents & Tooling ###
+.agents/
+.claude/
+skills-lock.json
