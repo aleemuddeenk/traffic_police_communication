@@ -1,5 +1,7 @@
 /**
- * ClearPath - Emergency Traffic Clearance Client Application
+ * ClearPath — Emergency Traffic Clearance Client Application
+ * All existing API endpoints, WebSocket topics, element IDs,
+ * and functions preserved. UI behaviour enhanced.
  */
 
 const AppState = {
@@ -22,7 +24,7 @@ const AppState = {
 const PRESETS = {
   origin: { lat: 12.9716, lon: 77.5946, label: 'MG Road Origin (Sender)' },
   ahead:  { lat: 12.9806, lon: 77.5946, label: '1 km North (Ahead Target)' },
-  behind: { lat: 12.9626, lon: 77.5946, label: '1 km South (Behind - Filtered Out)' }
+  behind: { lat: 12.9626, lon: 77.5946, label: '1 km South (Behind — Filtered Out)' }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('ClearPath Service Worker registered'))
+      .then(() => console.log('ClearPath Service Worker registered'))
       .catch(err => console.log('SW registration error:', err));
   }
 }
@@ -50,16 +52,102 @@ function initUIEvents() {
   document.getElementById('endDutyBtn').addEventListener('click', handleEndDuty);
   document.getElementById('logoutBtn').addEventListener('click', handleLogout);
   document.getElementById('openTriggerModalBtn').addEventListener('click', openTriggerModal);
-  document.getElementById('confirmTriggerBtn').addEventListener('click', handleTriggerAlert);
   document.getElementById('ackAlertBtn').addEventListener('click', handleAcknowledgeAlert);
   document.getElementById('dismissAlertBtn').addEventListener('click', handleDismissAlert);
   document.getElementById('ambulancePassedBtn').addEventListener('click', handleAmbulancePassed);
+
+  // Hold-to-confirm dispatch
+  initHoldToConfirm();
+
+  // Dev toggle
+  const devBtn = document.getElementById('devToggleBtn');
+  if (devBtn) {
+    devBtn.addEventListener('click', () => {
+      const selector = document.getElementById('devSelector');
+      const expanded = devBtn.getAttribute('aria-expanded') === 'true';
+      devBtn.setAttribute('aria-expanded', String(!expanded));
+      if (expanded) {
+        selector.hidden = true;
+      } else {
+        selector.hidden = false;
+      }
+    });
+  }
+
+  // Enter key on login inputs
+  ['officerIdInput', 'passwordInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  });
 }
 
+/* ── Hold-to-confirm ───────────────────────────────────────── */
+let holdTimer = null;
+let holdStart = null;
+const HOLD_DURATION = 1600; // ms
+
+function initHoldToConfirm() {
+  const btn = document.getElementById('confirmTriggerBtn');
+  const circle = document.getElementById('holdProgressCircle');
+  const label  = document.getElementById('holdBtnLabel');
+  if (!btn) return;
+
+  const circumference = 113; // 2π × 18
+
+  function startHold(e) {
+    e.preventDefault();
+    if (btn.classList.contains('dispatching')) return;
+    btn.classList.add('holding');
+    holdStart = Date.now();
+
+    function tick() {
+      const elapsed = Date.now() - holdStart;
+      const progress = Math.min(elapsed / HOLD_DURATION, 1);
+      const offset = circumference * (1 - progress);
+      if (circle) circle.style.strokeDashoffset = offset;
+      if (label) label.textContent = progress < 1 ? 'Hold to dispatch' : 'Dispatching...';
+
+      if (progress < 1) {
+        holdTimer = requestAnimationFrame(tick);
+      } else {
+        finishHold();
+      }
+    }
+    holdTimer = requestAnimationFrame(tick);
+  }
+
+  function cancelHold() {
+    if (holdTimer) cancelAnimationFrame(holdTimer);
+    holdTimer = null;
+    holdStart = null;
+    btn.classList.remove('holding');
+    if (circle) circle.style.strokeDashoffset = circumference;
+    if (label) label.textContent = 'Hold to dispatch';
+  }
+
+  function finishHold() {
+    btn.classList.remove('holding');
+    btn.classList.add('dispatching');
+    handleTriggerAlert().finally(() => {
+      btn.classList.remove('dispatching');
+      if (circle) circle.style.strokeDashoffset = circumference;
+      if (label) label.textContent = 'Hold to dispatch';
+    });
+  }
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('touchstart', startHold, { passive: false });
+  btn.addEventListener('mouseup', e => { if (holdStart && (Date.now() - holdStart) < HOLD_DURATION) cancelHold(); });
+  btn.addEventListener('mouseleave', cancelHold);
+  btn.addEventListener('touchend', e => { if (holdStart && (Date.now() - holdStart) < HOLD_DURATION) cancelHold(); });
+  btn.addEventListener('touchcancel', cancelHold);
+}
+
+/* ── Screen management ─────────────────────────────────────── */
 function showScreen(screenId) {
-  document.getElementById('loginScreen').style.display = screenId === 'loginScreen' ? 'block' : 'none';
-  document.getElementById('homeScreen').style.display = screenId === 'homeScreen' ? 'block' : 'none';
-  document.getElementById('dutyScreen').style.display = screenId === 'dutyScreen' ? 'flex' : 'none';
+  document.getElementById('loginScreen').style.display = screenId === 'loginScreen' ? 'flex' : 'none';
+  document.getElementById('homeScreen').style.display  = screenId === 'homeScreen'  ? 'flex' : 'none';
+  document.getElementById('dutyScreen').style.display  = screenId === 'dutyScreen'  ? 'flex' : 'none';
 
   if (screenId === 'dutyScreen' && AppState.map) {
     setTimeout(() => AppState.map.invalidateSize(), 200);
@@ -70,22 +158,27 @@ function fillCredentials(id, label) {
   document.getElementById('officerIdInput').value = id;
   document.getElementById('passwordInput').value = 'password123';
   const errBox = document.getElementById('loginErrorMsg');
-  errBox.style.display = 'block';
-  errBox.style.background = '#E0F2FE';
-  errBox.style.color = '#0369A1';
-  errBox.innerText = `Selected: ${label}`;
+  errBox.textContent = `Profile selected: ${label}`;
+  errBox.style.borderLeftColor = '#1354C4';
+  errBox.style.background = '#E8F0FD';
+  errBox.style.color = '#0D3E99';
+  errBox.hidden = false;
 }
 
+/* ── Auth ──────────────────────────────────────────────────── */
 async function handleLogin() {
   const officerId = document.getElementById('officerIdInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
-  const errBox = document.getElementById('loginErrorMsg');
+  const password  = document.getElementById('passwordInput').value;
+  const errBox    = document.getElementById('loginErrorMsg');
 
   if (!officerId || !password) {
-    errBox.innerText = 'Officer ID and password are required.';
-    errBox.style.display = 'block';
+    showLoginError('Officer ID and password are required.');
     return;
   }
+
+  const loginBtn = document.getElementById('loginBtn');
+  loginBtn.textContent = 'Verifying...';
+  loginBtn.disabled = true;
 
   try {
     const res = await fetch('/api/auth/login', {
@@ -96,20 +189,29 @@ async function handleLogin() {
 
     const data = await res.json();
     if (!res.ok) {
-      errBox.innerText = data.message || 'Verification failed against police records.';
-      errBox.style.display = 'block';
+      showLoginError(data.message || 'Credentials not matched against police records. Try again.');
       return;
     }
 
     AppState.token = data.token;
     localStorage.setItem('clearpath_jwt', data.token);
-    errBox.style.display = 'none';
-
+    errBox.hidden = true;
     setOfficerProfile(data.profile);
   } catch (err) {
-    errBox.innerText = 'Unable to connect to verification server.';
-    errBox.style.display = 'block';
+    showLoginError('Unable to connect to verification server. Check your connection.');
+  } finally {
+    loginBtn.textContent = 'Verify and enter';
+    loginBtn.disabled = false;
   }
+}
+
+function showLoginError(msg) {
+  const errBox = document.getElementById('loginErrorMsg');
+  errBox.textContent = msg;
+  errBox.style.borderLeftColor = '#C72020';
+  errBox.style.background = '#FFF0F0';
+  errBox.style.color = '#9A1313';
+  errBox.hidden = false;
 }
 
 async function fetchProfile() {
@@ -117,7 +219,6 @@ async function fetchProfile() {
     const res = await fetch('/api/me', {
       headers: { 'Authorization': `Bearer ${AppState.token}` }
     });
-
     if (res.ok) {
       const profile = await res.json();
       setOfficerProfile(profile);
@@ -133,11 +234,11 @@ function setOfficerProfile(profile) {
   AppState.officer = profile;
   AppState.isOnDuty = profile.onDuty;
 
-  document.getElementById('profileName').innerText = profile.name;
-  document.getElementById('profileRank').innerText = profile.rank.toUpperCase();
-  document.getElementById('profileBadge').innerText = profile.badgeNumber;
-  document.getElementById('profileOfficerId').innerText = profile.officerId;
-  document.getElementById('profileStation').innerText = `${profile.station} • ${profile.district}`;
+  document.getElementById('profileName').textContent      = profile.name;
+  document.getElementById('profileRank').textContent      = profile.rank;
+  document.getElementById('profileBadge').textContent     = profile.badgeNumber;
+  document.getElementById('profileOfficerId').textContent = profile.officerId;
+  document.getElementById('profileStation').textContent   = `${profile.station} · ${profile.district}`;
 
   if (profile.photoUrl) {
     document.getElementById('profilePhoto').src = profile.photoUrl;
@@ -159,21 +260,25 @@ function setOfficerProfile(profile) {
 }
 
 function updateHeaderStatus() {
-  const badge = document.getElementById('headerStatusBadge');
-  const text = document.getElementById('headerStatusText');
+  // Update both header status badges (home and duty screens each have one)
+  document.querySelectorAll('#headerStatusBadge').forEach(badge => {
+    const text = badge.querySelector('#headerStatusText') || badge;
+    const textEl = badge.querySelector('[id="headerStatusText"]') || badge.lastElementChild;
 
-  if (AppState.isOnDuty) {
-    badge.className = 'header-status-badge on-duty';
-    text.innerText = 'ON DUTY';
-  } else if (AppState.officer) {
-    badge.className = 'header-status-badge';
-    text.innerText = 'OFF DUTY';
-  } else {
-    badge.className = 'header-status-badge';
-    text.innerText = 'OFFLINE';
-  }
+    if (AppState.isOnDuty) {
+      badge.classList.add('on-duty');
+      if (textEl) textEl.textContent = 'On duty';
+    } else if (AppState.officer) {
+      badge.classList.remove('on-duty');
+      if (textEl) textEl.textContent = 'Off duty';
+    } else {
+      badge.classList.remove('on-duty');
+      if (textEl) textEl.textContent = 'Offline';
+    }
+  });
 }
 
+/* ── Preset positions ──────────────────────────────────────── */
 function setPresetPosition(key) {
   const preset = PRESETS[key];
   if (preset) {
@@ -188,6 +293,7 @@ function setPresetPosition(key) {
   }
 }
 
+/* ── Duty management ───────────────────────────────────────── */
 async function handleStartDuty() {
   try {
     if (!AppState.simulated && 'geolocation' in navigator) {
@@ -198,12 +304,12 @@ async function handleStartDuty() {
             timeout: 5000
           });
         });
-        AppState.coords.lat = pos.coords.latitude;
-        AppState.coords.lon = pos.coords.longitude;
+        AppState.coords.lat     = pos.coords.latitude;
+        AppState.coords.lon     = pos.coords.longitude;
         AppState.coords.heading = pos.coords.heading || 0;
-        AppState.coords.speed = pos.coords.speed || 0;
+        AppState.coords.speed   = pos.coords.speed   || 0;
       } catch (locErr) {
-        console.warn('GPS location request timed out or denied, using central outpost coordinates');
+        console.warn('GPS request timed out or denied, using central outpost coordinates');
       }
     }
 
@@ -222,7 +328,7 @@ async function handleStartDuty() {
     startLocationTracking();
     checkActiveAlerts();
   } catch (e) {
-    document.getElementById('permissionDeniedNotice').style.display = 'block';
+    document.getElementById('permissionDeniedNotice').hidden = false;
   }
 }
 
@@ -237,28 +343,24 @@ async function handleEndDuty() {
   } catch (e) {}
 
   AppState.isOnDuty = false;
-  if (AppState.pingInterval) {
-    clearInterval(AppState.pingInterval);
-    AppState.pingInterval = null;
-  }
-  if (AppState.stompClient) {
-    AppState.stompClient.disconnect();
-  }
+  if (AppState.pingInterval) { clearInterval(AppState.pingInterval); AppState.pingInterval = null; }
+  if (AppState.stompClient)  { AppState.stompClient.disconnect(); }
   updateHeaderStatus();
   showScreen('homeScreen');
 }
 
 function handleLogout() {
   localStorage.removeItem('clearpath_jwt');
-  AppState.token = null;
-  AppState.officer = null;
+  AppState.token    = null;
+  AppState.officer  = null;
   AppState.isOnDuty = false;
   if (AppState.pingInterval) clearInterval(AppState.pingInterval);
-  if (AppState.stompClient) AppState.stompClient.disconnect();
+  if (AppState.stompClient)  AppState.stompClient.disconnect();
   updateHeaderStatus();
   showScreen('loginScreen');
 }
 
+/* ── Map ───────────────────────────────────────────────────── */
 function initMap() {
   if (AppState.map) {
     AppState.map.invalidateSize();
@@ -273,15 +375,16 @@ function initMap() {
 
   L.control.zoom({ position: 'bottomright' }).addTo(AppState.map);
 
+  // Light tile layer to match the UI theme
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
   }).addTo(AppState.map);
 
   const officerIcon = L.divIcon({
     className: 'officer-map-pin',
-    html: `<div style="background:#0B3D91; border:2.5px solid #FFFFFF; width:20px; height:20px; border-radius:3px; box-shadow:0 1px 4px rgba(11,61,145,0.4);"></div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
+    html: `<div style="background:#1354C4;border:2.5px solid #fff;width:18px;height:18px;border-radius:4px;box-shadow:0 2px 6px rgba(19,84,196,0.45);"></div>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
   });
 
   AppState.officerMarker = L.marker([AppState.coords.lat, AppState.coords.lon], { icon: officerIcon })
@@ -292,24 +395,24 @@ function initMap() {
 }
 
 function updateCoordsDisplay() {
-  document.getElementById('currentCoords').innerText =
-    `Lat: ${AppState.coords.lat.toFixed(4)}, Lon: ${AppState.coords.lon.toFixed(4)}`;
+  const el = document.getElementById('currentCoords');
+  if (el) el.textContent = `Lat: ${AppState.coords.lat.toFixed(4)}, Lon: ${AppState.coords.lon.toFixed(4)}`;
 }
 
 function startLocationTracking() {
   transmitLocation();
 
   if (!AppState.pingInterval) {
-    AppState.pingInterval = setInterval(transmitLocation, 6000); // Every 6s
+    AppState.pingInterval = setInterval(transmitLocation, 6000);
   }
 
   if (!AppState.simulated && 'geolocation' in navigator) {
     navigator.geolocation.watchPosition(pos => {
       if (!AppState.simulated) {
-        AppState.coords.lat = pos.coords.latitude;
-        AppState.coords.lon = pos.coords.longitude;
+        AppState.coords.lat     = pos.coords.latitude;
+        AppState.coords.lon     = pos.coords.longitude;
         AppState.coords.heading = pos.coords.heading || 0;
-        AppState.coords.speed = pos.coords.speed || 0;
+        AppState.coords.speed   = pos.coords.speed   || 0;
         if (AppState.officerMarker) {
           AppState.officerMarker.setLatLng([AppState.coords.lat, AppState.coords.lon]);
         }
@@ -324,7 +427,6 @@ function startLocationTracking() {
 
 async function transmitLocation() {
   if (!AppState.isOnDuty || !AppState.token) return;
-
   try {
     const res = await fetch('/api/location', {
       method: 'POST',
@@ -333,26 +435,28 @@ async function transmitLocation() {
         'Authorization': `Bearer ${AppState.token}`
       },
       body: JSON.stringify({
-        latitude: AppState.coords.lat,
+        latitude:  AppState.coords.lat,
         longitude: AppState.coords.lon,
-        heading: AppState.coords.heading,
-        speed: AppState.coords.speed
+        heading:   AppState.coords.heading,
+        speed:     AppState.coords.speed
       })
     });
     if (res.ok) {
-      document.getElementById('currentRoadName').innerText = 'Patrol Post (GPS Active)';
+      const el = document.getElementById('currentRoadName');
+      if (el) el.textContent = 'Patrol post (GPS active)';
     }
   } catch (e) {
     console.debug('Telemetry ping skipped:', e);
   }
 }
 
+/* ── WebSocket ─────────────────────────────────────────────── */
 function connectWebSocket() {
   if (AppState.stompClient && AppState.stompClient.connected) return;
 
   const socket = new SockJS('/ws');
   AppState.stompClient = Stomp.over(socket);
-  AppState.stompClient.debug = null; // Quiet console
+  AppState.stompClient.debug = null;
 
   AppState.stompClient.connect({
     'Authorization': `Bearer ${AppState.token}`,
@@ -360,7 +464,6 @@ function connectWebSocket() {
   }, frame => {
     console.log('Connected to ClearPath STOMP Dispatch');
 
-    // Subscribe to private emergency alerts directed at this officer
     AppState.stompClient.subscribe('/user/queue/alerts', message => {
       const alertData = JSON.parse(message.body);
       handleIncomingEmergencyAlert(alertData);
@@ -370,7 +473,7 @@ function connectWebSocket() {
       subscribeToAlertUpdates(AppState.activeSenderAlertId);
     }
   }, error => {
-    console.warn('STOMP connection reconnecting in 5s...', error);
+    console.warn('STOMP reconnecting in 5s...', error);
     setTimeout(connectWebSocket, 5000);
   });
 }
@@ -387,14 +490,15 @@ function subscribeToAlertUpdates(alertId) {
         AppState.map.removeLayer(AppState.ambulanceMarker);
         AppState.ambulanceMarker = null;
       }
-      alert('Ambulance alert has cleared. Traffic flow normal.');
+      alert('Ambulance alert cleared. Traffic flow normal.');
     } else {
-      document.getElementById('senderAckCounter').innerText =
-        `${data.acknowledgedCount} / ${data.notifiedCount} Acknowledged`;
+      const el = document.getElementById('senderAckCounter');
+      if (el) el.textContent = `${data.acknowledgedCount} / ${data.notifiedCount} acked`;
     }
   });
 }
 
+/* ── Trigger modal ─────────────────────────────────────────── */
 function openTriggerModal() {
   document.getElementById('triggerModal').className = 'modal-overlay active';
 }
@@ -408,14 +512,18 @@ function selectCompass(dir) {
   document.querySelectorAll('.compass-btn').forEach(btn => {
     btn.classList.toggle('selected', btn.getAttribute('data-dir') === dir);
   });
+
+  // Rotate needle indicator if present
+  const needle = document.getElementById('compassNeedle');
+  if (needle) {
+    const deg = {N:0,NE:45,E:90,SE:135,S:180,SW:225,W:270,NW:315}[dir] || 0;
+    needle.style.transform = `rotate(${deg}deg)`;
+  }
 }
 
 async function handleTriggerAlert() {
   const confirmBtn = document.getElementById('confirmTriggerBtn');
-  confirmBtn.disabled = true;
-  confirmBtn.innerText = 'DISPATCHING...';
-
-  const type = document.getElementById('ambulanceTypeSelect').value;
+  const type  = document.getElementById('ambulanceTypeSelect').value;
   const plate = document.getElementById('ambulancePlateInput').value.trim();
 
   try {
@@ -426,11 +534,11 @@ async function handleTriggerAlert() {
         'Authorization': `Bearer ${AppState.token}`
       },
       body: JSON.stringify({
-        latitude: AppState.coords.lat,
-        longitude: AppState.coords.lon,
+        latitude:         AppState.coords.lat,
+        longitude:        AppState.coords.lon,
         compassDirection: AppState.selectedCompass,
-        ambulanceType: type,
-        ambulancePlate: plate
+        ambulanceType:    type,
+        ambulancePlate:   plate
       })
     });
 
@@ -443,50 +551,71 @@ async function handleTriggerAlert() {
     closeTriggerModal();
     AppState.activeSenderAlertId = data.alertId;
 
-    // Show Sender Status bar
-    document.getElementById('senderRoadLabel').innerText = `${data.roadName || 'Main Corridor'} [Facing ${data.compassDirection}]`;
-    document.getElementById('senderAckCounter').innerText = `0 / ${data.notifiedCount} Acknowledged`;
-    document.getElementById('senderConnectingRoads').innerText =
-      data.connectingRoads && data.connectingRoads.length > 0 ? data.connectingRoads.join(', ') : 'Arterial Junctions';
+    // Show sender status bar
+    const roadEl = document.getElementById('senderRoadLabel');
+    const ackEl  = document.getElementById('senderAckCounter');
+    const roadsEl = document.getElementById('senderConnectingRoads');
+    if (roadEl)  roadEl.textContent  = `${data.roadName || 'Main Corridor'} (facing ${data.compassDirection})`;
+    if (ackEl)   ackEl.textContent   = `0 / ${data.notifiedCount} acked`;
+    if (roadsEl) roadsEl.textContent = data.connectingRoads && data.connectingRoads.length > 0
+      ? data.connectingRoads.join(', ') : 'Arterial junctions';
     document.getElementById('senderActiveStatus').style.display = 'block';
 
     subscribeToAlertUpdates(data.alertId);
 
-    // Plot ambulance marker on map
+    // Plot ambulance on map
     if (AppState.map) {
       if (AppState.ambulanceMarker) AppState.map.removeLayer(AppState.ambulanceMarker);
       const ambIcon = L.divIcon({
         className: 'amb-map-pin',
-        html: `<div style="background:#D32F2F; border:2px solid #FFFFFF; width:26px; height:26px; border-radius:3px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:13px; box-shadow:0 2px 6px rgba(211,47,47,0.5);">A</div>`,
-        iconSize: [26, 26],
-        iconAnchor: [13, 13]
+        html: `<div style="background:#C72020;border:2px solid #fff;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(199,32,32,0.55);">A</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
       });
       AppState.ambulanceMarker = L.marker([AppState.coords.lat, AppState.coords.lon], { icon: ambIcon })
         .addTo(AppState.map)
-        .bindPopup(`<b>Ambulance Dispatched Ahead (${data.compassDirection})</b><br>${data.notifiedCount} officers alerted`)
+        .bindPopup(`<b>Ambulance dispatched (${data.compassDirection})</b><br>${data.notifiedCount} officers alerted`)
         .openPopup();
     }
 
-    alert(`Emergency alert dispatched: ${data.notifiedCount} officers ahead within 3 km have been alerted.`);
+    // Count-up animation for notified count
+    animateCountUp(data.notifiedCount);
+
+    alert(`Alert dispatched. ${data.notifiedCount} officers within 3 km ahead have been notified.`);
   } catch (err) {
     alert('Failed to trigger alert. Check connection.');
-  } finally {
-    confirmBtn.disabled = false;
-    confirmBtn.innerText = 'CONFIRM & DISPATCH';
   }
 }
 
+function animateCountUp(target) {
+  const el = document.getElementById('senderAckCounter');
+  if (!el) return;
+  let current = 0;
+  const step = Math.max(1, Math.floor(target / 20));
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = `0 / ${current} acked`;
+    if (current >= target) clearInterval(timer);
+  }, 40);
+}
+
+/* ── Incoming alert ────────────────────────────────────────── */
 function handleIncomingEmergencyAlert(alert) {
   AppState.currentIncomingAlert = alert;
 
-  // Start looping emergency siren audio and phone vibration
   window.ambulanceSiren.start();
 
-  document.getElementById('alertSenderName').innerText = `${alert.sender.rank} ${alert.sender.name}`;
-  document.getElementById('alertSenderBadge').innerText = `${alert.sender.badgeNumber} (${alert.sender.station})`;
-  document.getElementById('alertRoadName').innerText = alert.roadName || 'Main Road Corridor';
-  document.getElementById('alertDistanceVal').innerText = `${alert.distanceKm.toFixed(2)} km away`;
-  document.getElementById('alertHeadingVal').innerText = `Facing ${alert.compassDirection} (${alert.headingDeg.toFixed(0)}°)`;
+  const senderEl  = document.getElementById('alertSenderName');
+  const badgeEl   = document.getElementById('alertSenderBadge');
+  const roadEl    = document.getElementById('alertRoadName');
+  const distEl    = document.getElementById('alertDistanceVal');
+  const headingEl = document.getElementById('alertHeadingVal');
+
+  if (senderEl)  senderEl.textContent  = `${alert.sender.rank} ${alert.sender.name}`;
+  if (badgeEl)   badgeEl.textContent   = `${alert.sender.badgeNumber} — ${alert.sender.station}`;
+  if (roadEl)    roadEl.textContent    = alert.roadName || 'Main Road Corridor';
+  if (distEl)    distEl.textContent    = `${alert.distanceKm.toFixed(2)} km`;
+  if (headingEl) headingEl.textContent = `Facing ${alert.compassDirection} (${alert.headingDeg.toFixed(0)}°)`;
 
   const roadList = document.getElementById('alertConnectingRoadsList');
   roadList.innerHTML = '';
@@ -494,15 +623,38 @@ function handleIncomingEmergencyAlert(alert) {
     alert.connectingRoads.forEach(r => {
       const span = document.createElement('span');
       span.className = 'connecting-road-badge';
-      span.innerText = r;
+      span.textContent = r;
       roadList.appendChild(span);
     });
   } else {
-    roadList.innerHTML = '<span class="connecting-road-badge">Forward Junctions</span>';
+    roadList.innerHTML = '<span class="connecting-road-badge">Forward junctions</span>';
   }
 
-  // Display full screen high priority siren alert
+  // Vibrate if supported
+  if ('vibrate' in navigator) {
+    navigator.vibrate([300, 100, 300, 100, 500]);
+  }
+
   document.getElementById('sirenAlertOverlay').className = 'siren-alert-container active';
+
+  // Animate the distance number counting down
+  animateDistanceCountIn(alert.distanceKm);
+}
+
+function animateDistanceCountIn(targetKm) {
+  const el = document.getElementById('alertDistanceVal');
+  if (!el) return;
+  let start = targetKm * 1.15;
+  const startTime = Date.now();
+  const duration = 1200;
+  function tick() {
+    const t = Math.min((Date.now() - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val = start + (targetKm - start) * ease;
+    el.textContent = `${val.toFixed(2)} km`;
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 async function handleAcknowledgeAlert() {
@@ -517,7 +669,7 @@ async function handleAcknowledgeAlert() {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${AppState.token}` }
     });
-    alert('Acknowledgment recorded: You are clearing the route.');
+    alert('Acknowledgment recorded. You are clearing the route.');
   } catch (e) {
     console.error('Ack error:', e);
   }
@@ -572,8 +724,10 @@ async function checkActiveAlerts() {
         const first = list[0];
         if (first.sender.id === AppState.officer.id) {
           AppState.activeSenderAlertId = first.alertId;
-          document.getElementById('senderRoadLabel').innerText = `${first.roadName || 'Corridor'} [Facing ${first.compassDirection}]`;
-          document.getElementById('senderAckCounter').innerText = `${first.acknowledgedCount} / ${first.notifiedCount} Acknowledged`;
+          const roadEl = document.getElementById('senderRoadLabel');
+          const ackEl  = document.getElementById('senderAckCounter');
+          if (roadEl) roadEl.textContent = `${first.roadName || 'Corridor'} (facing ${first.compassDirection})`;
+          if (ackEl)  ackEl.textContent  = `${first.acknowledgedCount} / ${first.notifiedCount} acked`;
           document.getElementById('senderActiveStatus').style.display = 'block';
           subscribeToAlertUpdates(first.alertId);
         }
