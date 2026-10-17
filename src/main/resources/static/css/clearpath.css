@@ -1,34 +1,42 @@
-/* ClearPath - Official Police Department Emergency Dispatch Console */
+/* ClearPath - Law Enforcement Emergency Dispatch Console */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --police-blue: #0B3D91;
-  --police-blue-dark: #07265D;
-  --police-blue-hover: #093175;
-  --card-bg: #FFFFFF;
-  --card-light-blue: #E8F0FB;
-  --bg-page: #F4F7FC;
-  --border-color: #CEDCEC;
-  --border-strong: #94A3B8;
-  
-  --text-main: #0F172A;
-  --text-muted: #475569;
-  --text-light: #FFFFFF;
-  
-  --emergency-red: #D32F2F;
-  --emergency-red-hover: #B71C1C;
+  /* Editorial Palette: High-End Deep Navy Slate */
+  --bg-canvas: #0A101D;
+  --bg-surface: #10192A;
+  --bg-surface-elevated: #152238;
+  --bg-input: #0D1424;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-focus: #3B82F6;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-inverse: #0A101D;
+
+  --police-blue: #2563EB;
+  --police-blue-hover: #1D4ED8;
+  --police-blue-active: #1E40AF;
+
+  --emergency-red: #DC2626;
+  --emergency-red-hover: #B91C1C;
   --emergency-amber: #D97706;
-  --status-green: #15803D;
+  --status-green: #10B981;
 
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
 
+  /* Strict geometric radiuses: clean rectangular enterprise UI */
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
 
-  --shadow-sm: 0 1px 3px rgba(11, 61, 145, 0.08);
-  --shadow-md: 0 4px 6px -1px rgba(11, 61, 145, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(11, 61, 145, 0.12);
+  --transition-fast: 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -39,24 +47,24 @@
 }
 
 body {
-  font-family: var(--font-family);
-  background-color: var(--bg-page);
-  color: var(--text-main);
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   line-height: 1.5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Official Header */
+/* Header */
 .gov-header {
-  background-color: var(--police-blue);
-  color: var(--text-light);
-  padding: 12px 18px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 3px solid var(--police-blue-dark);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -72,54 +80,58 @@ body {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  background: var(--police-blue-dark);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .brand-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .brand-subtitle {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.9;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 .header-status-badge {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-light);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
   display: flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 8px;
 }
 
 .header-status-badge.on-duty {
-  background: #15803D;
-  border-color: #16A34A;
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34D399;
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: var(--radius-xs);
-  background: #FFFFFF;
+  background: currentColor;
 }
 
-/* Shell */
+/* Container */
 .app-container {
   flex: 1;
   display: flex;
@@ -128,256 +140,288 @@ body {
   max-width: 620px;
   margin: 0 auto;
   width: 100%;
-  background: #FFFFFF;
-  border-left: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
+  background: var(--bg-canvas);
+  border-left: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
 }
 
 /* Operational Cards */
 .gov-card {
-  background-color: var(--card-light-blue);
-  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 22px;
   margin: 16px;
 }
 
 .panel-header-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--police-blue);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .panel-header-desc {
   font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 18px;
 }
 
-/* Inputs and Forms */
+/* Forms & Inputs */
 .input-label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--police-blue-dark);
+  color: var(--text-secondary);
   margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
 .gov-input, .gov-select {
   width: 100%;
   padding: 12px 14px;
-  background-color: #FFFFFF;
-  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   font-size: 0.95rem;
-  color: var(--text-main);
-  font-family: var(--font-family);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   min-height: 48px;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.gov-input::placeholder {
+  color: var(--text-muted);
 }
 
 .gov-input:focus, .gov-select:focus {
   outline: none;
-  border-color: var(--police-blue);
-  box-shadow: 0 0 0 2px rgba(11, 61, 145, 0.15);
+  border-color: var(--border-focus);
+  background-color: var(--bg-surface-elevated);
 }
 
-/* Official Action Buttons (Clean 4px-6px borders, strictly no pill shapes) */
+.gov-select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+/* Action Buttons (Strict rectangular geometric design, no pill shapes) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 12px 20px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.02em;
   border-radius: var(--radius-sm);
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   min-height: 48px;
   text-decoration: none;
   width: 100%;
-  font-family: var(--font-family);
-  transition: background-color 0.15s ease;
+  font-family: var(--font-sans);
+  transition: background-color var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .btn-primary {
   background-color: var(--police-blue);
-  color: var(--text-light);
+  color: #FFFFFF;
 }
 
-.btn-primary:hover, .btn-primary:active {
-  background-color: var(--police-blue-dark);
+.btn-primary:hover {
+  background-color: var(--police-blue-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--police-blue-active);
+  transform: translateY(1px);
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
-  color: var(--police-blue);
-  border: 1.5px solid var(--police-blue);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-secondary:hover {
-  background-color: var(--card-light-blue);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:active {
+  transform: translateY(1px);
 }
 
 .btn-emergency {
   background-color: var(--emergency-red);
   color: #FFFFFF;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  border: 1px solid var(--emergency-red-hover);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.btn-emergency:hover, .btn-emergency:active {
+.btn-emergency:hover {
   background-color: var(--emergency-red-hover);
+}
+
+.btn-emergency:active {
+  transform: translateY(1px);
 }
 
 .btn-sm {
   padding: 8px 14px;
-  font-size: 0.82rem;
-  min-height: 38px;
+  font-size: 0.8rem;
+  min-height: 36px;
 }
 
-/* Demo Profile Selector (Testing Utility) */
+/* Official Officer Profile Selector */
 .demo-selector-section {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 14px;
+  padding: 16px;
   margin-top: 18px;
 }
 
 .demo-title {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--police-blue-dark);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   margin-bottom: 10px;
 }
 
 .demo-pills {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .demo-pill {
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--card-light-blue);
-  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
   text-align: left;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .demo-pill:hover {
-  background-color: #D7E5F8;
-  border-color: var(--police-blue);
+  background-color: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
 .demo-pill strong {
-  color: var(--police-blue-dark);
+  color: #60A5FA;
 }
 
-/* Operational Specifications Card */
+/* Operational Parameters Card */
 .operational-spec-card {
-  background: #FFFFFF;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px;
   margin: 16px;
 }
 
 .spec-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .spec-item {
-  background: var(--card-light-blue);
-  border: 1px solid var(--border-color);
-  padding: 10px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 12px;
   border-radius: var(--radius-sm);
 }
 
 .spec-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .spec-value {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  color: var(--police-blue);
+  color: var(--text-primary);
   margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
 }
 
-/* Verified Officer Card */
+/* Verified Officer Profile Header */
 .officer-badge-card {
   display: flex;
   gap: 14px;
   align-items: center;
-  background: var(--card-light-blue);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   padding: 16px;
 }
 
 .officer-avatar {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-sm);
-  border: 2px solid var(--police-blue);
+  border: 1px solid var(--border-strong);
   object-fit: cover;
-  background: #FFFFFF;
+  background: var(--bg-surface-elevated);
 }
 
 .officer-details h3 {
   font-size: 1.15rem;
-  color: var(--police-blue-dark);
+  color: var(--text-primary);
   font-weight: 700;
   margin-bottom: 2px;
 }
 
 .officer-rank-pill {
   display: inline-block;
-  background: var(--police-blue);
-  color: #FFFFFF;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(37, 99, 235, 0.35);
+  color: #93C5FD;
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-xs);
   text-transform: uppercase;
+  letter-spacing: 0.04em;
   margin-bottom: 4px;
 }
 
 .officer-meta {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 /* Map Viewport */
 .duty-map-wrapper {
   flex: 1;
   position: relative;
-  min-height: 400px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
 }
@@ -386,21 +430,21 @@ body {
   width: 100%;
   height: 100%;
   flex: 1;
-  min-height: 380px;
-  background-color: #E2E8F0;
+  min-height: 400px;
+  background-color: var(--bg-canvas);
 }
 
 .map-floating-bar {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: 12px;
+  left: 12px;
+  right: 12px;
   z-index: 500;
-  background: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 10px 14px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -412,20 +456,21 @@ body {
 
 .road-name-tag {
   font-weight: 700;
-  color: var(--police-blue);
+  color: var(--text-primary);
   display: block;
 }
 
 .gps-coords-tag {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .map-action-drawer {
-  background: #FFFFFF;
+  background: var(--bg-surface);
   padding: 14px 16px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -441,32 +486,37 @@ body {
 
 .compass-btn {
   padding: 12px 4px;
-  background: #FFFFFF;
-  border: 1.5px solid var(--border-color);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--police-blue);
+  color: var(--text-secondary);
   cursor: pointer;
   text-align: center;
-  font-family: var(--font-family);
+  font-family: var(--font-mono);
+  transition: all var(--transition-fast);
 }
 
 .compass-btn:hover {
-  background-color: var(--card-light-blue);
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
 }
 
 .compass-btn.selected {
   background-color: var(--police-blue);
   color: #FFFFFF;
-  border-color: var(--police-blue-dark);
+  border-color: var(--police-blue-hover);
 }
 
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(11, 61, 145, 0.75);
+  background: rgba(10, 16, 29, 0.8);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -479,60 +529,62 @@ body {
 }
 
 .modal-card {
-  background: #FFFFFF;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
   max-width: 480px;
   width: 100%;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
   overflow: hidden;
 }
 
 .modal-header {
   padding: 14px 18px;
-  background: var(--police-blue);
-  color: #FFFFFF;
+  background: var(--bg-surface-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-header.emergency {
-  background: var(--emergency-red);
+  border-left: 4px solid var(--emergency-red);
 }
 
 .modal-header h3 {
-  font-size: 1.1rem;
-  color: #FFFFFF;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .modal-body {
-  padding: 18px;
+  padding: 20px;
   max-height: 80vh;
   overflow-y: auto;
 }
 
 .modal-footer {
-  padding: 14px 18px;
-  background: var(--bg-page);
-  border-top: 1px solid var(--border-color);
+  padding: 14px 20px;
+  background: var(--bg-surface-elevated);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   gap: 10px;
 }
 
-/* Full Screen Emergency Alert Screen */
+/* Full Screen Siren Alert Screen */
 .siren-alert-container {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #8B0000;
+  background: #5A0000;
   color: #FFFFFF;
   display: none;
   flex-direction: column;
   padding: 24px;
   text-align: center;
   overflow-y: auto;
-  border: 8px solid #D32F2F;
+  border: 6px solid #DC2626;
 }
 
 .siren-alert-container.active {
@@ -540,25 +592,25 @@ body {
 }
 
 .siren-header-banner {
-  background: #D32F2F;
-  border: 2px solid #FFFFFF;
+  background: #DC2626;
+  border: 1px solid #FFFFFF;
   border-radius: var(--radius-sm);
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 16px;
 }
 
 .siren-title {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.02em;
   color: #FFFFFF;
 }
 
 .siren-info-card {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
-  padding: 16px;
+  padding: 18px;
   margin: 16px 0;
   text-align: left;
 }
@@ -567,7 +619,7 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 0.92rem;
 }
 
@@ -576,7 +628,7 @@ body {
 }
 
 .siren-row-label {
-  color: #E2E8F0;
+  color: #CBD5E1;
   font-weight: 600;
 }
 
@@ -594,7 +646,7 @@ body {
 
 .connecting-road-badge {
   background: #FFFFFF;
-  color: var(--police-blue-dark);
+  color: #0A101D;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 4px 8px;
@@ -611,7 +663,7 @@ body {
 
 .btn-ack {
   background: #FFFFFF;
-  color: #8B0000;
+  color: #7F1D1D;
   font-size: 1.15rem;
   font-weight: 800;
   padding: 16px;
@@ -619,7 +671,8 @@ body {
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
+  transition: background-color var(--transition-fast);
 }
 
 .btn-ack:hover, .btn-ack:active {
@@ -628,15 +681,15 @@ body {
 
 /* Sender Live Status Bar */
 .sender-status-widget {
-  background: var(--card-light-blue);
-  border: 1.5px solid var(--police-blue);
+  background: var(--bg-surface-elevated);
+  border: 1px solid rgba(37, 99, 235, 0.4);
   border-radius: var(--radius-sm);
-  padding: 12px;
+  padding: 12px 14px;
   margin-bottom: 8px;
 }
 
 .live-ack-counter {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -648,17 +701,18 @@ body {
   color: #FFFFFF;
   padding: 2px 10px;
   border-radius: var(--radius-xs);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
   font-weight: 700;
 }
 
 /* Simulation Controls */
 .sim-controls-panel {
-  background: #FEF3C7;
-  border: 1px solid #F59E0B;
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.25);
   border-radius: var(--radius-sm);
   padding: 12px;
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: 0.82rem;
 }
 
@@ -670,29 +724,29 @@ body {
 
 .sim-btn {
   flex: 1;
-  padding: 6px;
-  background: #FFFFFF;
-  border: 1px solid #D97706;
+  padding: 7px;
+  background: var(--bg-surface);
+  border: 1px solid rgba(217, 119, 6, 0.4);
   border-radius: var(--radius-xs);
   font-size: 0.75rem;
   font-weight: 700;
-  color: #B45309;
+  color: #FBBF24;
   cursor: pointer;
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
 }
 
 .sim-btn:hover {
-  background: #FEF9C3;
+  background: rgba(217, 119, 6, 0.15);
 }
 
-/* Footer Compliance Links */
+/* Official Footer */
 .gov-footer {
-  background: var(--police-blue-dark);
-  color: #FFFFFF;
+  background: var(--bg-surface);
+  color: var(--text-muted);
   padding: 16px 20px;
   font-size: 0.75rem;
   text-align: center;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .footer-links {
@@ -703,23 +757,24 @@ body {
 }
 
 .footer-link {
-  color: #CBD5E1;
+  color: var(--text-secondary);
   text-decoration: none;
+  font-weight: 600;
 }
 
 .footer-link:hover {
-  color: #FFFFFF;
+  color: var(--text-primary);
   text-decoration: underline;
 }
 
-/* Responsive Container */
+/* Responsive */
 @media (min-width: 621px) {
   body {
     padding: 16px 0;
   }
   .app-container {
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     min-height: 750px;
     overflow: hidden;
   }
