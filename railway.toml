@@ -1,0 +1,10 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "mvn package -DskipTests"
+
+[deploy]
+startCommand = "java -Dserver.port=$PORT $JAVA_OPTS -jar target/clearpath-backend-*.jar"
+healthcheckPath = "/"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
