@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: clearpath
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SPRING_H2_CONSOLE_ENABLED
+        value: "false"
