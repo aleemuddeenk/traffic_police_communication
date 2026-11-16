@@ -5,7 +5,7 @@
  */
 
 const AppState = {
-  token: localStorage.getItem('clearpath_jwt'),
+  token: localStorage.getItem('clearpath_jwt') || (localStorage.getItem('clearpath_role') === 'POLICE' ? localStorage.getItem('clearpath_token') : null),
   officer: null,
   isOnDuty: false,
   coords: { lat: 12.9716, lon: 77.5946, heading: 0, speed: 0 },
@@ -28,14 +28,19 @@ const PRESETS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  // If civilian is logged in, civilian-app.js handles everything — skip police boot
+  const role = localStorage.getItem('clearpath_role');
+  if (role === 'CIVILIAN') return;
+
   initUIEvents();
   registerServiceWorker();
 
   if (AppState.token) {
     fetchProfile();
-  } else {
+  } else if (role === 'POLICE') {
     showScreen('loginScreen');
   }
+  // Otherwise, civilian-app.js DOMContentLoaded shows the role chooser
 });
 
 function registerServiceWorker() {
@@ -145,9 +150,18 @@ function initHoldToConfirm() {
 
 /* ── Screen management ─────────────────────────────────────── */
 function showScreen(screenId) {
-  document.getElementById('loginScreen').style.display = screenId === 'loginScreen' ? 'flex' : 'none';
-  document.getElementById('homeScreen').style.display  = screenId === 'homeScreen'  ? 'flex' : 'none';
-  document.getElementById('dutyScreen').style.display  = screenId === 'dutyScreen'  ? 'flex' : 'none';
+  // Hide all screens (police + civilian)
+  const allScreens = [
+    'roleChooserScreen','loginScreen','homeScreen','dutyScreen',
+    'civilianLoginScreen','civilianDashScreen'
+  ];
+  allScreens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  const target = document.getElementById(screenId);
+  if (target) target.style.display = '';
 
   if (screenId === 'dutyScreen' && AppState.map) {
     setTimeout(() => AppState.map.invalidateSize(), 200);
@@ -195,6 +209,8 @@ async function handleLogin() {
 
     AppState.token = data.token;
     localStorage.setItem('clearpath_jwt', data.token);
+    localStorage.setItem('clearpath_token', data.token);
+    localStorage.setItem('clearpath_role', 'POLICE');
     errBox.hidden = true;
     setOfficerProfile(data.profile);
   } catch (err) {
@@ -226,7 +242,8 @@ async function fetchProfile() {
       handleLogout();
     }
   } catch (e) {
-    showScreen('loginScreen');
+    if (window.showRoleChooser) showRoleChooser();
+    else showScreen('loginScreen');
   }
 }
 
@@ -351,13 +368,16 @@ async function handleEndDuty() {
 
 function handleLogout() {
   localStorage.removeItem('clearpath_jwt');
+  localStorage.removeItem('clearpath_token');
+  localStorage.removeItem('clearpath_role');
   AppState.token    = null;
   AppState.officer  = null;
   AppState.isOnDuty = false;
   if (AppState.pingInterval) clearInterval(AppState.pingInterval);
   if (AppState.stompClient)  AppState.stompClient.disconnect();
   updateHeaderStatus();
-  showScreen('loginScreen');
+  if (window.showRoleChooser) showRoleChooser();
+  else showScreen('loginScreen');
 }
 
 /* ── Map ───────────────────────────────────────────────────── */

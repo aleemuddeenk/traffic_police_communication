@@ -3,6 +3,7 @@ package com.clearpath.config;
 import com.clearpath.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,8 +20,8 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -38,6 +39,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/",
                     "/index.html",
+                    "/civilian.html",
                     "/privacy.html",
                     "/terms.html",
                     "/manifest.json",
@@ -50,8 +52,10 @@ public class SecurityConfig {
                     "/favicon.ico",
                     "/favicon.svg"
                 ).permitAll()
-                // Public auth endpoints
+                // Public auth endpoints (police + civilian OTP)
                 .requestMatchers("/api/auth/**").permitAll()
+                // Civilian endpoints require ROLE_CIVILIAN
+                .requestMatchers("/api/civilian/**").hasRole("CIVILIAN")
                 // WebSocket connection handshakes
                 .requestMatchers("/ws/**", "/ws-direct/**").permitAll()
                 // All other business endpoints require verified officer JWT

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ClearPath — Traffic Police Dispatch</title>
-  <meta name="description" content="ClearPath: Official traffic police ambulance clearance dispatch terminal for authorised officers.">
+  <title>ClearPath — Ambulance Alert System</title>
+  <meta name="description" content="ClearPath: Real-time ambulance alert system for traffic police and civilians.">
   <meta name="theme-color" content="#1354C4">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="manifest" href="/manifest.json">
@@ -32,9 +32,72 @@
 <body>
 
   <!-- ═══════════════════════════════════════════════════════
-       SCREEN 1: LOGIN
+       SCREEN 0: ROLE CHOOSER (shown first)
        ═══════════════════════════════════════════════════════ -->
-  <div id="loginScreen" class="screen screen-login" aria-label="Officer login">
+  <div id="roleChooserScreen" class="screen screen-login" aria-label="Choose how you want to continue">
+
+    <div class="login-pane-form">
+      <div class="login-brand">
+        <svg class="login-badge-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16 2L4 7v9c0 6.6 5.2 12.8 12 14.4C22.8 28.8 28 22.6 28 16V7L16 2z" fill="#1354C4"/>
+          <path d="M12 16l3 3 5-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <div class="login-brand-name">ClearPath</div>
+          <div class="login-brand-sub">Ambulance Alert System</div>
+        </div>
+      </div>
+
+      <h1 class="login-heading">Who are you?</h1>
+      <p class="login-subtext">Choose how you want to use ClearPath. Each role has different access.</p>
+
+      <div class="role-chooser-grid">
+        <button type="button" class="role-chooser-card" id="choosePoliceBtn" onclick="showPoliceLogin()">
+          <div class="role-chooser-icon">
+            <svg width="36" height="36" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path d="M16 2L4 7v9c0 6.6 5.2 12.8 12 14.4C22.8 28.8 28 22.6 28 16V7L16 2z" fill="#1354C4"/>
+              <path d="M12 16l3 3 5-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="role-chooser-label">Traffic Police</div>
+          <div class="role-chooser-desc">Report ambulances. Control alerts. Full dispatch access.</div>
+        </button>
+
+        <button type="button" class="role-chooser-card" id="chooseCivilianBtn" onclick="showCivilianLogin()">
+          <div class="role-chooser-icon" style="color:#C72020;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="role-chooser-label">Civilian</div>
+          <div class="role-chooser-desc">Receive real-time alerts when an ambulance is approaching you.</div>
+        </button>
+      </div>
+
+      <footer class="login-footer">
+        <a href="/privacy.html" class="footer-link">Privacy policy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms.html" class="footer-link">Terms</a>
+      </footer>
+    </div>
+
+    <!-- Right pane: animated map illustration -->
+    <div class="login-pane-map" aria-hidden="true">
+      <canvas id="loginMapCanvas" class="login-map-canvas"></canvas>
+      <div class="login-map-caption">
+        <div class="login-map-caption-title">Forward-only alert</div>
+        <div class="login-map-caption-desc">Alerts reach users up to 3 km ahead within a 60° cone of travel.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 1: POLICE LOGIN
+       ═══════════════════════════════════════════════════════ -->
+  <div id="loginScreen" class="screen screen-login" aria-label="Officer login" style="display:none;">
 
     <!-- Left pane: form -->
     <div class="login-pane-form">
@@ -48,6 +111,8 @@
           <div class="login-brand-sub">Traffic Police Dispatch</div>
         </div>
       </div>
+
+      <button type="button" class="login-back-btn" onclick="showRoleChooser()">← Back</button>
 
       <h1 class="login-heading">Officer login</h1>
       <p class="login-subtext">Authorised personnel only. Enter your department credentials to access the dispatch terminal.</p>
@@ -100,15 +165,6 @@
         <span aria-hidden="true">·</span>
         <a href="/terms.html" class="footer-link">Terms</a>
       </footer>
-    </div>
-
-    <!-- Right pane: live animated map illustration -->
-    <div class="login-pane-map" aria-hidden="true">
-      <canvas id="loginMapCanvas" class="login-map-canvas"></canvas>
-      <div class="login-map-caption">
-        <div class="login-map-caption-title">Forward-only alert</div>
-        <div class="login-map-caption-desc">Alerts reach officers up to 3 km ahead within a 60° cone of travel.</div>
-      </div>
     </div>
   </div>
 
@@ -365,13 +421,156 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════
+       CIVILIAN SCREEN A: OTP LOGIN
+       ═══════════════════════════════════════════════════════ -->
+  <div id="civilianLoginScreen" class="screen screen-login" aria-label="Civilian login" style="display:none;">
+    <div class="login-pane-form">
+      <div class="login-brand">
+        <svg class="login-badge-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C72020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <div>
+          <div class="login-brand-name">ClearPath</div>
+          <div class="login-brand-sub">Civilian Alert Receiver</div>
+        </div>
+      </div>
+
+      <button type="button" class="login-back-btn" onclick="showRoleChooser()">← Back</button>
+
+      <h1 class="login-heading">Civilian login</h1>
+      <p class="login-subtext">Enter your mobile number. We'll send a one-time code to verify it's you.</p>
+
+      <div id="civLoginErrorMsg" class="login-error" role="alert" hidden></div>
+
+      <!-- Step 1: phone -->
+      <div id="civPhoneStep">
+        <div class="field-group">
+          <label class="field-label" for="civPhoneInput">Mobile number</label>
+          <input type="tel" id="civPhoneInput" class="field-input" placeholder="+91 98765 43210" autocomplete="tel">
+        </div>
+        <button type="button" id="civSendOtpBtn" class="btn-primary-lg">Send OTP</button>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div id="civOtpStep" style="display:none;">
+        <div class="otp-sent-notice" id="civOtpSentNotice">OTP sent to <strong id="civOtpPhoneDisplay"></strong></div>
+        <div id="civDemoOtpBox" class="demo-otp-box" style="display:none;">
+          Demo OTP: <strong id="civDemoOtpVal"></strong>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="civOtpInput">Enter 6-digit OTP</label>
+          <input type="text" id="civOtpInput" class="field-input field-input-otp" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+        </div>
+        <button type="button" id="civVerifyOtpBtn" class="btn-primary-lg">Verify and enter</button>
+        <button type="button" class="btn-ghost" style="margin-top:8px;" onclick="civGoBackToPhone()">Change number</button>
+      </div>
+
+      <footer class="login-footer">
+        <a href="/privacy.html" class="footer-link">Privacy policy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms.html" class="footer-link">Terms</a>
+      </footer>
+    </div>
+
+    <div class="login-pane-map" aria-hidden="true">
+      <canvas id="civLoginMapCanvas" class="login-map-canvas"></canvas>
+      <div class="login-map-caption">
+        <div class="login-map-caption-title">Stay informed, stay safe</div>
+        <div class="login-map-caption-desc">You'll receive instant alerts when an ambulance is approaching your location.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CIVILIAN SCREEN B: DASHBOARD
+       ═══════════════════════════════════════════════════════ -->
+  <div id="civilianDashScreen" class="screen civ-dash" aria-label="Civilian dashboard" style="display:none;">
+
+    <header class="app-header" role="banner">
+      <div class="header-brand">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C72020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="header-brand-name">ClearPath</span>
+      </div>
+      <div id="civStatusChip" class="status-chip" role="status">
+        <span class="status-dot"></span>
+        <span id="civStatusText">Connecting…</span>
+      </div>
+      <button type="button" id="civLogoutBtn" class="btn-end-duty">Sign out</button>
+    </header>
+
+    <!-- Normal state: safe -->
+    <div id="civSafeState" class="civ-safe-state">
+      <div class="civ-safe-icon" aria-hidden="true">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <circle cx="28" cy="28" r="28" fill="#E8F0FD"/>
+          <path d="M28 10L10 18v13c0 9.9 7.8 19.2 18 21.6C38.2 50.2 46 40.9 46 31V18L28 10z" fill="#1354C4"/>
+          <path d="M22 28l4.5 4.5 7.5-7.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="civ-safe-title">All clear</div>
+      <div class="civ-safe-body">No ambulance alerts in your area right now. Location sharing is active.</div>
+      <div id="civLocationStatus" class="civ-location-status">
+        <span id="civLocationDot" class="status-dot"></span>
+        <span id="civLocationText">Locating you…</span>
+      </div>
+    </div>
+
+    <!-- Alert state: ambulance approaching -->
+    <div id="civAlertState" class="civ-alert-state" style="display:none;" role="alertdialog" aria-modal="false" aria-label="Ambulance approaching alert">
+      <div class="civ-siren-rings" aria-hidden="true">
+        <div class="civ-ring civ-ring-1"></div>
+        <div class="civ-ring civ-ring-2"></div>
+        <div class="civ-ring civ-ring-3"></div>
+      </div>
+
+      <div class="civ-alert-banner">
+        <div class="civ-alert-icon" aria-hidden="true">🚑</div>
+        <div class="civ-alert-title">AMBULANCE APPROACHING</div>
+      </div>
+
+      <div class="civ-distance-block" aria-live="polite">
+        <div id="civDistanceNum" class="civ-distance-num">— m</div>
+        <div class="civ-distance-label">away and approaching</div>
+      </div>
+
+      <div class="civ-alert-details">
+        <div class="civ-detail-row">
+          <span class="civ-detail-label">Direction</span>
+          <span id="civAlertDirection" class="civ-detail-val">—</span>
+        </div>
+        <div class="civ-detail-row">
+          <span class="civ-detail-label">Road</span>
+          <span id="civAlertRoad" class="civ-detail-val">—</span>
+        </div>
+        <div class="civ-detail-row">
+          <span class="civ-detail-label">Status</span>
+          <span id="civAlertStatus" class="civ-detail-val">Approaching</span>
+        </div>
+      </div>
+
+      <div class="civ-safety-notice">
+        <strong>Please give way safely.</strong> Do not make sudden or unsafe movements.
+        Move to the side of the road when it is safe to do so.
+      </div>
+
+      <div id="civAlertMap" class="civ-alert-map" role="application" aria-label="Alert map showing ambulance location"></div>
+
+      <button type="button" id="civDismissAlertBtn" class="btn-ack civ-dismiss-btn">I've given way — dismiss</button>
+    </div>
+
+  </div>
+
   <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-  <script src="/js/audio-siren.js?v=20261017b"></script>
-  <script src="/js/clearpath-app.js?v=20261017b"></script>
-  <script src="/js/login-canvas.js?v=20261017b"></script>
-  <script src="/js/ui-extras.js?v=20261017b"></script>
+  <script src="/js/audio-siren.js?v=20261018a"></script>
+  <script src="/js/clearpath-app.js?v=20261018a"></script>
+  <script src="/js/login-canvas.js?v=20261018a"></script>
+  <script src="/js/ui-extras.js?v=20261018a"></script>
+  <script src="/js/civilian-app.js?v=20261018a"></script>
 </body>
 </html>

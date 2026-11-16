@@ -7,12 +7,14 @@ import com.clearpath.geo.RoadNetworkService;
 import com.clearpath.geo.SpatialMathService;
 import com.clearpath.model.AlertRecipient;
 import com.clearpath.model.AmbulanceAlert;
+import com.clearpath.model.CivilianLocationPing;
 import com.clearpath.model.LocationPing;
 import com.clearpath.model.Officer;
 import com.clearpath.model.enums.AlertStatus;
 import com.clearpath.model.enums.RecipientStatus;
 import com.clearpath.repository.AlertRecipientRepository;
 import com.clearpath.repository.AmbulanceAlertRepository;
+import com.clearpath.repository.CivilianLocationPingRepository;
 import com.clearpath.repository.LocationPingRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +37,7 @@ public class AlertService {
     private final AmbulanceAlertRepository alertRepository;
     private final AlertRecipientRepository recipientRepository;
     private final LocationPingRepository locationPingRepository;
+    private final CivilianLocationPingRepository civilianLocationPingRepository;
     private final SpatialMathService spatialMathService;
     private final RoadNetworkService roadNetworkService;
     private final DutyService dutyService;
@@ -48,6 +51,7 @@ public class AlertService {
             AmbulanceAlertRepository alertRepository,
             AlertRecipientRepository recipientRepository,
             LocationPingRepository locationPingRepository,
+            CivilianLocationPingRepository civilianLocationPingRepository,
             SpatialMathService spatialMathService,
             RoadNetworkService roadNetworkService,
             DutyService dutyService,
@@ -60,6 +64,7 @@ public class AlertService {
         this.alertRepository = alertRepository;
         this.recipientRepository = recipientRepository;
         this.locationPingRepository = locationPingRepository;
+        this.civilianLocationPingRepository = civilianLocationPingRepository;
         this.spatialMathService = spatialMathService;
         this.roadNetworkService = roadNetworkService;
         this.dutyService = dutyService;
@@ -171,6 +176,42 @@ public class AlertService {
             );
             // FCM push notification (background siren)
             fcmNotificationService.sendEmergencyPushNotification(recip, savedAlert);
+        }
+
+        // --- Notify eligible CIVILIANS ---
+        Instant civilianThreshold = Instant.now().minusSeconds(1800);
+        List<CivilianLocationPing> civilianCandidates = civilianLocationPingRepository
+                .findActiveCiviliansInBoundingBox(
+                        bbox.minLat(), bbox.maxLat(), bbox.minLon(), bbox.maxLon(), civilianThreshold);
+        if (civilianCandidates.isEmpty()) {
+            civilianCandidates = civilianLocationPingRepository.findAllActiveCivilians();
+        }
+
+        for (CivilianLocationPing civPing : civilianCandidates) {
+            SpatialMathService.TargetCheckResult eval = spatialMathService.evaluateTarget(
+                    request.latitude(), request.longitude(), headingDeg,
+                    civPing.getLatitude(), civPing.getLongitude()
+            );
+            if (eval.isEligible()) {
+                // Build a lightweight alert payload for the civilian
+                Map<String, Object> civPayload = new LinkedHashMap<>();
+                civPayload.put("type", "AMBULANCE_APPROACHING");
+                civPayload.put("alertId", savedAlert.getId());
+                civPayload.put("message", "Ambulance approaching from the " + spatialMathService.degreesToCompass(headingDeg + 180) + " – please give way safely.");
+                civPayload.put("distance", Math.round(eval.distanceKm() * 1000));
+                civPayload.put("distanceKm", eval.distanceKm());
+                civPayload.put("direction", compassDirection);
+                civPayload.put("roadName", roadName != null ? roadName : "nearby road");
+                civPayload.put("headingDeg", headingDeg);
+                civPayload.put("ambulanceLat", request.latitude());
+                civPayload.put("ambulanceLon", request.longitude());
+                civPayload.put("status", "APPROACHING");
+                civPayload.put("connectingRoads", connectingRoads);
+                // Push to civilian's private channel: /user/CIV:{phoneNumber}/queue/alerts
+                String civDestinationUser = "CIV:" + civPing.getCivilian().getPhoneNumber();
+                messagingTemplate.convertAndSendToUser(civDestinationUser, "/queue/alerts", civPayload);
+                log.info("Civilian {} notified for alert #{}", civPing.getCivilian().getPhoneNumber(), savedAlert.getId());
+            }
         }
 
         // Audit log the alert trigger

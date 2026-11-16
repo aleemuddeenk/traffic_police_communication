@@ -32,8 +32,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = extractJwtFromRequest(request);
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            String officerId = tokenProvider.getOfficerIdFromToken(jwt);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(officerId);
+            String subject = tokenProvider.getSubjectFromToken(jwt);
+            String role = tokenProvider.getRoleFromToken(jwt);
+
+            // For civilians, we prefix the username so UserDetailsService can route correctly
+            String usernameKey = "ROLE_CIVILIAN".equals(role)
+                    ? CustomUserDetailsService.CIVILIAN_PREFIX + subject
+                    : subject;
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(usernameKey);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -50,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        // Also allow passing token as query param for WebSocket handshake if needed
+        // Also allow passing token as query param for WebSocket handshake
         String tokenParam = request.getParameter("token");
         if (StringUtils.hasText(tokenParam)) {
             return tokenParam;
