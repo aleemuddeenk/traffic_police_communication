@@ -149,6 +149,7 @@ document.getElementById('civVerifyOtpBtn')?.addEventListener('click', async () =
     civProfile = data.profile;
     localStorage.setItem('clearpath_token',       civToken);
     localStorage.setItem('clearpath_role',        'CIVILIAN');
+    localStorage.setItem('clearpath_civ_phone',   phone);
     localStorage.setItem('clearpath_civ_profile', JSON.stringify(civProfile));
 
     setBtn('civVerifyOtpBtn', 'Verify and enter', false);
@@ -181,8 +182,16 @@ function launchCivilianDash() {
   startCivilianLocation();
 
   // Logout
-  document.getElementById('civLogoutBtn').onclick = civilianLogout;
+  const topLogout = document.getElementById('civLogoutBtn');
+  if (topLogout) topLogout.onclick = civilianLogout;
+  const bottomLogout = document.getElementById('civBottomLogoutBtn');
+  if (bottomLogout) bottomLogout.onclick = civilianLogout;
   document.getElementById('civDismissAlertBtn').onclick = dismissCivAlert;
+
+  // Display user phone
+  const phone = (civProfile && (civProfile.phoneNumber || civProfile.phone)) || localStorage.getItem('clearpath_civ_phone') || 'Active Civilian';
+  const phoneEl = document.getElementById('civUserPhoneDisplay');
+  if (phoneEl) phoneEl.textContent = phone;
 }
 
 function updateCivStatus(text, online) {
@@ -382,6 +391,7 @@ function civilianLogout() {
   localStorage.removeItem('clearpath_token');
   localStorage.removeItem('clearpath_role');
   localStorage.removeItem('clearpath_civ_profile');
+  localStorage.removeItem('clearpath_civ_phone');
   civToken = civProfile = civStompClient = civActiveAlert = null;
   dismissCivAlert();
   showRoleChooser();
