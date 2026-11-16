@@ -1393,3 +1393,51 @@ button { font-family: var(--font-body); }
   background: #FFE8E8;
   border-color: #FFB3B3;
 }
+
+
+/* ── Civilian Center Action & Live Status Chip ─────────────── */
+.civ-center-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-civ-center-logout {
+  background: #FFF2F2;
+  border: 1.5px solid #FFC2C2;
+  border-radius: var(--radius);
+  color: #C72020;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 24px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(199, 32, 32, 0.08);
+  transition: all var(--trans-fast);
+}
+
+.btn-civ-center-logout:hover {
+  background: #FFE0E0;
+  border-color: #FFA3A3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(199, 32, 32, 0.15);
+}
+
+.btn-civ-center-logout:active {
+  transform: translateY(0);
+}
+
+.status-chip-live {
+  background: #EAF8EE !important;
+  border: 1.5px solid #A2E2B8 !important;
+  color: #126330 !important;
+  font-weight: 700 !important;
+}
+
+.status-chip-live .status-dot {
+  background: #16A34A !important;
+  animation: pulse-dot 1.8s infinite;
+}

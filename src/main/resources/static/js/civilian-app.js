@@ -181,11 +181,13 @@ function launchCivilianDash() {
   // Start location sharing
   startCivilianLocation();
 
-  // Logout
+  // Logout handlers
   const topLogout = document.getElementById('civLogoutBtn');
   if (topLogout) topLogout.onclick = civilianLogout;
   const bottomLogout = document.getElementById('civBottomLogoutBtn');
   if (bottomLogout) bottomLogout.onclick = civilianLogout;
+  const centerLogout = document.getElementById('civCenterLogoutBtn');
+  if (centerLogout) centerLogout.onclick = civilianLogout;
   document.getElementById('civDismissAlertBtn').onclick = dismissCivAlert;
 
   // Display user phone
@@ -203,7 +205,8 @@ function updateCivStatus(text, online) {
     dot.style.background = online ? '#16a34a' : '#94a3b8';
   }
   if (chip) {
-    chip.classList.toggle('status-chip-duty', online);
+    chip.classList.remove('status-chip-duty');
+    chip.classList.toggle('status-chip-live', online);
   }
 }
 

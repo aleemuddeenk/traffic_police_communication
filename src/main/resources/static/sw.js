@@ -1,11 +1,12 @@
-// ClearPath PWA Service Worker v2 (Dark Tactical Command Center)
-const CACHE_NAME = 'clearpath-v2';
+// ClearPath Service Worker v5
+const CACHE_NAME = 'clearpath-v5';
 const ASSETS_TO_CACHE = [
   '/',
-  '/index.html?v=2',
-  '/css/clearpath.css?v=2',
-  '/js/clearpath-app.js?v=2',
-  '/js/audio-siren.js?v=2',
+  '/index.html?v=20261018c',
+  '/css/clearpath.css?v=20261018c',
+  '/js/clearpath-app.js?v=20261018c',
+  '/js/civilian-app.js?v=20261018c',
+  '/js/audio-siren.js?v=20261018c',
   '/manifest.json'
 ];
 
